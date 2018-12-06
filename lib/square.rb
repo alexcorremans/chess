@@ -7,6 +7,10 @@ class Square
     @contents = contents
   end
 
+  def coordinates
+    [x,y]
+  end
+
   def empty?
     contents.nil?
   end
