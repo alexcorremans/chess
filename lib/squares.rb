@@ -19,6 +19,12 @@ class Squares
     search_squares_by_coordinates(x,y).empty?
   end
 
+  def add(location, piece)
+    x = coordinates[0]
+    y = coordinates[1]
+    search_squares_by_coordinates(x,y).add(piece)
+  end
+
   private
 
   def search_squares_by_contents(piece)
