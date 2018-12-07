@@ -1,8 +1,9 @@
 class Piece
-  attr_reader :colour
+  attr_reader :colour, :type
 
-  def initialize(colour='white')
+  def initialize(colour)
     @colour = colour
+    @type = self.class.to_s.downcase
     post_initialize
   end
 

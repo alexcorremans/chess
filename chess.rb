@@ -1,8 +1,8 @@
 require_relative 'config'
-require_relative 'squaresfactory'
+require_relative 'boardfactory'
 
 def new_game
-  board = Board.new(SquaresFactory.build(board_config))
+  board = BoardFactory.build
   white = Player.new(colour: "white")
   black = Player.new(colour: "black")
   game = Game.new(board, white, black)

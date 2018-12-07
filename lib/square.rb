@@ -18,7 +18,7 @@ class Square
   end
 
   def add(piece)
-    contents = piece
+    @contents = piece
   end
 
   def empty

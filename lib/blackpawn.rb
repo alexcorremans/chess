@@ -4,6 +4,7 @@ require_relative 'square'
 class BlackPawn < Piece
   def post_initialize
     @colour = 'black'
+    @type = 'pawn'
   end
 
   def try_path(a,b,direction)
@@ -20,11 +21,12 @@ class BlackPawn < Piece
     [down]
   end
 end
-
-black_pawn = BlackPawn.new
+=begin
+black_pawn = BlackPawn.new('black')
 puts black_pawn.colour
 black_pawn.print_path([1,4],[1,5])
 black_pawn.print_path([1,4],[1,3])
 black_pawn.print_path([1,4],[1,2])
 black_pawn.print_path([1,7],[1,6])
 black_pawn.print_path([1,7],[1,5])
+=end
