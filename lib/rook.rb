@@ -30,7 +30,3 @@ class Rook < Piece
     [up, right, down, left]
   end
 end
-
-rook = Rook.new('white')
-puts rook.colour
-rook.print_path([3,3],[3,7])

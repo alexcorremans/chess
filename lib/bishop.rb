@@ -30,7 +30,3 @@ class Bishop < Piece
     [diagonal_right_up, diagonal_right_down, diagonal_left_up, diagonal_left_down]
   end
 end
-
-bishop = Bishop.new('white')
-bishop.print_path([3,3],[3,7])
-bishop.print_path([3,3],[5,5])

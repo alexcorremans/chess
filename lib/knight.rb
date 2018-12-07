@@ -22,8 +22,3 @@ class Knight < Piece
     [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
   end
 end
-
-knight = Knight.new('black')
-knight.print_path([3,3],[4,4])
-knight.print_path([3,3],[4,3])
-knight.print_path([3,3],[1,2])

@@ -16,9 +16,3 @@ class King < Piece
     [up, right, down, left, diagonal_right_up, diagonal_right_down, diagonal_left_up, diagonal_left_down]
   end
 end
-
-king = King.new('black')
-puts king.colour
-king.print_path([1,1],[1,0])
-king.print_path([3,3],[4,4])
-king.print_path([3,3],[5,5])

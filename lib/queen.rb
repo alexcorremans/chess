@@ -30,8 +30,3 @@ class Queen < Piece
     [up, right, down, left, diagonal_right_up, diagonal_right_down, diagonal_left_up, diagonal_left_down]
   end
 end
-
-queen = Queen.new('white')
-queen.print_path([3,3],[3,7])
-queen.print_path([3,3],[5,5])
-queen.print_path([3,3],[1,2])
