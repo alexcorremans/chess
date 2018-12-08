@@ -1,11 +1,14 @@
-require_relative 'config'
-require_relative 'boardfactory'
+require 'yaml'
+%w{config boardfactory player game}.each do |file|
+  require_relative file
+end
 
 def new_game
+  puts "Welcome to chess!"
   board = BoardFactory.build
-  white = Player.new(colour: "white")
-  black = Player.new(colour: "black")
-  game = Game.new(board, white, black)
+  white = Player.new(team: "white")
+  black = Player.new(team: "black")
+  game = Game.new(board: board, white_player: white, black_player: black)
   game.play
 end
 
@@ -20,13 +23,11 @@ def saved_game
       retry
     end
 end
-    
-
-puts "Welcome to Chess!"
 
 if Dir["saved_games/*"].empty?
   new_game  
 else
+  puts "Welcome back!"
   puts "Type 'new' to play a new game or 'saved' to open a previously saved game."
   choice = gets.chomp.downcase
   until choice == "new" || choice == "saved"

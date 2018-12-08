@@ -9,10 +9,10 @@ class Board
     @pieces = pieces
   end
 
-  def display(colour)
+  def display(team)
   end
 
-  def move(type, colour, end_point)
+  def move(team, type, end_point)
     # check if dest is within the board
     # check if piece is on the board: has_piece?(type, colour)
     # then locate(piece, colour) - again several possibilities
