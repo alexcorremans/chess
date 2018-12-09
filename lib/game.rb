@@ -30,7 +30,7 @@ class Game
         save
       elsif feedback == 'quit'
         quit
-      elsif feedback = 'resign'
+      elsif feedback == 'resign'
         resign
       end
     end
@@ -67,7 +67,11 @@ class Game
   end
 
   def save
-    # to be implemented
+    puts "Enter a filename so you can retrieve your saved game later:"
+    filename = gets.chomp.downcase
+    File.open("../saved_games/#{filename}.yml", "w") do |file|
+      file.write(YAML.dump(self))
+    end
     puts "Game saved."
   end
 
