@@ -3,11 +3,18 @@ require_relative 'square'
 
 class Knight < Piece
   def try_path(a, b, direction)
-    start = Square.new(x: a[0], y: a[1])
+    start = square(a[0], a[1])
     path = [start]
     direction.each do |step|
+=begin
+      current_square = start.generate_child(step)
+      if current_square.x == b[0] && current_square.y == b[1]
+        path << current_square
+        return path
+      end
+=end
       if start.x + step[0] == b[0] && start.y + step[1] == b[1]
-        path << Square.new(x: b[0], y: b[1], parent: start)
+        path << square(b[0], b[1], start)
         return path
       end
     end
