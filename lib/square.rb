@@ -22,7 +22,7 @@ class Square
   end
 
   def empty
-    contents = nil
+    @contents = nil
   end
 
   def generate_child(step)
