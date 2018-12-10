@@ -1,3 +1,5 @@
+require_relative 'square'
+
 class Piece
   attr_reader :colour, :type
 
@@ -34,6 +36,10 @@ class Piece
 
   def directions
     []
+  end
+
+  def square(x,y,parent=nil)
+    Square.new(x: x, y: y, parent: parent)
   end
 
   def up

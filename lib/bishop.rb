@@ -3,7 +3,7 @@ require_relative 'square'
 
 class Bishop < Piece
   def try_path(a, b, direction)
-    start = Square.new(x: a[0], y: a[1])
+    start = square(a[0], a[1])
     queue = [start]
     path = []
     loop do
