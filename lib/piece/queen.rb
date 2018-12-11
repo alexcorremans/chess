@@ -1,7 +1,6 @@
 require_relative 'piece'
-require_relative 'square'
 
-class Rook < Piece
+class Queen < Piece
   def try_path(a, b, direction)
     start = square(a[0], a[1])
     queue = [start]
@@ -23,10 +22,10 @@ class Rook < Piece
       path.unshift(current)
       current = current.parent
     end
-    path
+    return convert_path(path)
   end
 
   def directions
-    [up, right, down, left]
+    [up, right, down, left, diagonal_right_up, diagonal_right_down, diagonal_left_up, diagonal_left_down]
   end
 end

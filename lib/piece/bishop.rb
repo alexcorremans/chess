@@ -1,5 +1,4 @@
 require_relative 'piece'
-require_relative 'square'
 
 class Bishop < Piece
   def try_path(a, b, direction)
@@ -23,7 +22,7 @@ class Bishop < Piece
       path.unshift(current)
       current = current.parent
     end
-    path
+    return convert_path(path)
   end
   
   def directions

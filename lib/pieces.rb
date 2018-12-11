@@ -1,4 +1,5 @@
-%w{whitepawn blackpawn bishop rook knight queen king}.each { |l| require_relative l }
+Dir["/piece/*"].each {|file| require file }
+
 require 'forwardable'
 class Pieces
   extend Forwardable
