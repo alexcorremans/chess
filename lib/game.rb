@@ -19,7 +19,7 @@ class Game
   private
 
   def turn
-    board.display(team)
+    display
     puts "It's your turn, #{player_name}!"
     loop do
       feedback = get_player_feedback
@@ -38,6 +38,10 @@ class Game
 
   def switch_players
     current_player == black_player ? white_player : black_player
+  end
+
+  def display
+    board.display(team)
   end
   
   def team
