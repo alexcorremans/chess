@@ -13,25 +13,36 @@ class Squares
     search_squares_by_contents(piece).coordinates
   end
 
-  def empty?(coordinates)
-    x = coordinates[0]
-    y = coordinates[1]
-    search_squares_by_coordinates(x,y).empty?
+  def empty?(location)
+    x = location[0]
+    y = location[1]
+    search_squares_by_location(x,y).empty?
   end
 
   def add(location, piece)
-    x = coordinates[0]
-    y = coordinates[1]
-    search_squares_by_coordinates(x,y).add(piece)
+    x = location[0]
+    y = location[1]
+    new_square = search_squares_by_location(x,y).add(piece)
+    update(new_square)
   end
 
   private
+
+  def update(new_square)
+    @squares = squares.map do |square|
+      square == new_square if same_location?(square, new_square)
+    end
+  end
+
+  def same_location?(square, other_square)
+    square.x == other_square.x && square.y == other_square.y
+  end
 
   def search_squares_by_contents(piece)
     find { |square| square.contents == piece }
   end
 
-  def search_squares_by_coordinates(x,y)
+  def search_squares_by_location(x,y)
     find { |square| square.x == x && square.y == y }
   end
 end
