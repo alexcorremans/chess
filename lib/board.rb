@@ -12,34 +12,52 @@ class Board
   def display(team)
   end
 
-  def move(team, type, end_point)
-    # check if dest is within the board
-    # check if piece is on the board: has_piece?(type, colour)
-    # then locate(piece, colour) - again several possibilities
-    # if dest is at the same location, inform player
-    # then get_path from piece(start, dest) for each piece
-    # empty_path needed yes or no? only for queen, rook, bishop WOOHOO
-    # destination full? that's a capture, need to let the player know
-    # empty piece's position on the board
-    # add piece to destination
-    # castling, en passant, pawn two steps, pawn capture
+  def get_pieces(type='all', team)
+    pieces.get_pieces(type, team)
   end
 
-  def check?
+  def get_position(piece)
+    locate(piece)
   end
 
-  def check_mate?
+  def can_move?(piece, path)
+    # true or false depending on the rules. 
+    # rule 1: if path.size > 3: check if the squares in the middle are empty
+    # other rules: castling, en passant, pawn two steps, pawn capture
+    # note for castling: it's the king who initiates the move
+  end
+
+  def move(piece, path)
+    start_pos = path[0]
+    end_pos = path[-1]
+    empty(start_pos)
+    unless empty?(end_pos)
+      captured = get_piece(end_pos)
+      # remove the piece from pieces
+      empty(end_pos)
+    end
+    add(end_pos, piece)
+    return self
+  end
+
+  def check?(team)
+    # one of the opposite player's pieces can capture the team's king
+    king = get_king(team)
+    # get opposite_team
+    pieces = get_pieces(opposite_team)
+    can_move = can_move(pieces, locate(king))
+    !can_move.empty?
+  end
+
+  def check_mate?(team)
+    # king is in check
+    # any move the player makes leaves the king in check
+    # for all the pieces the player has, all the valid moves end with the king in check
+    # for all the pieces the player has, get all the valid moves (something with iterating over can_move for each square)
+    # for each valid move, look at the board: the king has to be in check still
   end
 
   private
-
-  def has_piece?(type, colour)
-    get_pieces(type, colour).nil? ? true : false
-  end
-
-  def get_pieces(type, colour)
-    pieces.get_pieces(type, colour)
-  end
 
   def add(location, piece)
     squares.add(location, piece)
@@ -51,5 +69,21 @@ class Board
 
   def empty?(coordinates)
     squares.empty?(coordinates)
+  end
+
+  def empty(location)
+    squares.empty(location)
+  end
+
+  def get_piece(location)
+    squares.get_piece(location)
+  end
+
+  def can_move(pieces, endpoint)
+    pieces.select { |piece| piece.can_move?(board, endpoint) }
+  end
+
+  def get_king(team)
+    pieces.detect { |piece| piece.type == 'king' && piece.team == team }
   end
 end

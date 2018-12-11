@@ -11,6 +11,25 @@ class Piece
     post_initialize
   end
 
+  def can_move?(board, endpoint)
+    pos = board.get_position(self)
+    path = get_path(pos, endpoint)
+    if path.nil?
+      return false
+    else
+      return board.can_move?(self, path)
+    end
+  end
+
+  def move(board, endpoint)
+    pos = board.get_position(self)
+    path = get_path(pos, endpoint)
+    new_board = board.move(self, path)
+    return new_board
+  end
+
+  protected
+
   def get_path(a,b)
     directions.each do |direction|
       path = try_path(a,b,direction)
@@ -29,8 +48,12 @@ class Piece
     end
   end
 
+  # subclasses may override
+
   def post_initialize
   end
+
+  # subclasses should override
 
   def try_path(a,b,direction)
     raise NotImplementedError, "#{self.class} should have implemented..."
@@ -38,5 +61,5 @@ class Piece
 
   def directions
     []
-  end
+  end 
 end

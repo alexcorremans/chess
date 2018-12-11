@@ -26,6 +26,19 @@ class Squares
     update(new_square)
   end
 
+  def empty(location)
+    x = location[0]
+    y = location[1]
+    new_square = search_squares_by_location(x,y).empty
+    update(new_square)
+  end
+
+  def get_piece(location)
+    x = location[0]
+    y = location[1]
+    search_squares_by_location.contents
+  end
+
   private
 
   def update(new_square)

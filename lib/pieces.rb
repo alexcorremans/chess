@@ -11,6 +11,10 @@ class Pieces
   end
 
   def get_pieces(type, colour)
-    find_all { |piece| piece.type == type && piece.colour == colour }
+    if type == 'all'
+      find_all { |piece| piece.colour == colour }
+    else
+      find_all { |piece| piece.type == type && piece.colour == colour }
+    end
   end
 end

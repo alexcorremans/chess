@@ -11,7 +11,9 @@ class Game
   def play
     loop do
       turn
-      break if # check whether it's the end of the game (checkmate, stalemate)
+      # this might have to go somewhere else:
+      # if board.check?(team): print message saying 'Check!'
+      # check whether it's the end of the game (checkmate? stalemate?) and end the game if that's the case
       switch_players
     end    
   end
@@ -19,19 +21,21 @@ class Game
   private
 
   def turn
-    display
+    display_board
     puts "It's your turn, #{player_name}!"
     loop do
-      feedback = get_player_feedback
-      break if feedback == 'moved'
-      if feedback == 'help'
+      response = get_player_response
+      if response == 'help'
         help
-      elsif feedback == 'save'
+      elsif response == 'save'
         save
-      elsif feedback == 'quit'
+      elsif response == 'quit'
         quit
-      elsif feedback == 'resign'
+      elsif response == 'resign'
         resign
+      else # response is the board with player move made
+        update_board(response)
+        break
       end
     end
   end
@@ -40,8 +44,12 @@ class Game
     current_player == black_player ? white_player : black_player
   end
 
-  def display
+  def display_board
     board.display(team)
+  end
+
+  def update_board(new_board)
+    @board = new_board
   end
   
   def team
@@ -52,7 +60,7 @@ class Game
     current_player.name
   end
 
-  def get_player_feedback
+  def get_player_response
     current_player.play(board)
   end
 
@@ -100,9 +108,14 @@ class Game
     exit
   end
 
-  def checkmate
+  def check?(team)
+    board.check?(team)
   end
 
-  def stalemate
+  def checkmate?(team)
+    board.checkmate?(team)
+  end
+
+  def stalemate?
   end
 end
