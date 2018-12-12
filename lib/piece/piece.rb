@@ -28,7 +28,7 @@ class Piece
     return new_board
   end
 
-  protected
+  # end of public interface
 
   def get_path(a,b)
     directions.each do |direction|
