@@ -30,6 +30,12 @@ describe Square do
       square.add("a chess piece")
       expect(square.contents).to eql("a chess piece")
     end
+
+    it "returns the modified square" do
+      square = Square.new(x: 5, y: 4)
+      new_square = square.add("a chess piece")
+      expect(new_square).to eql(square)
+    end
   end
 
   describe "#empty" do
@@ -37,6 +43,12 @@ describe Square do
       square = Square.new(x:5, y:4, contents: "a chess piece")
       square.empty
       expect(square.contents).to be nil
+    end
+
+    it "returns the modified square" do
+      square = Square.new(x:5, y:4, contents: "a chess piece")
+      new_square = square.empty
+      expect(new_square).to eql(square)
     end
   end
 

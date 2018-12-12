@@ -19,10 +19,12 @@ class Square
 
   def add(piece)
     @contents = piece
+    self
   end
 
   def empty
     @contents = nil
+    self
   end
 
   def generate_child(step)
