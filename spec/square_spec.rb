@@ -9,14 +9,18 @@ describe Square do
   end
 
   describe "#empty?" do
-    it "returns true if the contents of the square are nil" do
-      square = Square.new(x: 5, y: 4)
-      expect(square.empty?).to be true
+    context "when the square is empty" do
+      it "returns true" do
+        square = Square.new(x: 5, y: 4)
+        expect(square.empty?).to be true
+      end
     end
 
-    it "returns false if the contents of the square are not nil" do
-      square = Square.new(x: 5, y:4, contents: "some piece")
-      expect(square.empty?).to be false
+    context "when the square is not empty" do
+      it "returns false" do
+        square = Square.new(x: 5, y:4, contents: "some piece")
+        expect(square.empty?).to be false
+      end
     end
   end
 
@@ -40,30 +44,36 @@ describe Square do
 
     let(:square) { Square.new(x:5, y:4) }
 
-    it "returns a child Square object" do
-      child = square.generate_child([0,0])
-      expect(child).to be_an_instance_of(Square)
+    context "when the result is within the board's boundaries" do
+      it "returns a child Square object" do
+        child = square.generate_child([0,0])
+        expect(child).to be_an_instance_of(Square)
+      end
+  
+      it "sets the child square's parent to the square on which the method was called" do
+        child = square.generate_child([0,0])
+        expect(child.parent).to eql(square)
+      end
+  
+      it "sets the child square's coordinates to the sum of the original square's coordinates and the ones contained in the given two-element array" do
+        child = square.generate_child([2,1])
+        expect(child.x).to eql(7)
+        expect(child.y).to eql(5)
+      end
     end
 
-    it "sets the child square's parent to the square on which the method was called" do
-      child = square.generate_child([0,0])
-      expect(child.parent).to eql(square)
+    context "when the result's x-coordinate is not within the board's boundaries" do
+      it "returns nil" do
+        child = square.generate_child([3,0])
+        expect(child).to be nil
+      end
     end
 
-    it "sets the child square's coordinates to the sum of the original square's coordinates and the ones contained in a given two-element array" do
-      child = square.generate_child([2,1])
-      expect(child.x).to eql(7)
-      expect(child.y).to eql(5)
-    end
-
-    it "returns nil if the sum of the x coordinates is not between 0 and 7 (the board's boundaries)" do
-      child = square.generate_child([3,0])
-      expect(child).to be nil
-    end
-
-    it "returns nil if the sum of the y coordinates is not between 0 and 7 (the board's boundaries)" do
-      child = square.generate_child([0,-5])
-      expect(child).to be nil
+    context "when the result's y-coordinate is not within the board's boundaries" do
+      it "returns nil" do
+        child = square.generate_child([0,-5])
+        expect(child).to be nil
+      end
     end
   end
 end
