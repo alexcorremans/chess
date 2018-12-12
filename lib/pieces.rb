@@ -17,4 +17,8 @@ class Pieces
       find_all { |piece| piece.type == type && piece.colour == colour }
     end
   end
+
+  def remove(piece)
+    @pieces -= [piece]
+  end
 end

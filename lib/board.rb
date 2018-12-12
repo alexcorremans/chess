@@ -31,9 +31,10 @@ class Board
     start_pos = path[0]
     end_pos = path[-1]
     empty(start_pos)
-    unless empty?(end_pos)
+    if !empty?(end_pos)
       captured = get_piece(end_pos)
-      # remove the piece from pieces
+      puts "You captured a #{captured.colour} #{captured.type}!"
+      remove(captured)
       empty(end_pos)
     end
     add(end_pos, piece)
@@ -77,6 +78,10 @@ class Board
 
   def get_piece(location)
     squares.get_piece(location)
+  end
+
+  def remove(piece)
+    pieces.remove(piece)
   end
 
   def can_move(pieces, endpoint)
