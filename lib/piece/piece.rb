@@ -13,6 +13,7 @@ class Piece
 
   def can_move?(board, endpoint)
     pos = board.get_position(self)
+    return false if pos == endpoint
     path = get_path(pos, endpoint)
     if !path.nil?
       return board.can_move?(self, path)
