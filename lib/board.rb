@@ -20,16 +20,24 @@ class Board
     locate(piece)
   end
 
-  def can_move?(piece, path)
+  def can_move?(piece, path, special_move=nil)
     # true or false depending on the rules. 
+    # if !special-move
+      # normal behaviour
+    # else
+      # special_move_allowed?(piece, path, move_name)
     # rule 1: if path.size > 3: check if the squares in the middle are empty
     # other rules: castling, en passant, pawn two steps, pawn capture
     # note for castling: it's the king who initiates the move
   end
 
-  def move(piece, path)
+  def move(piece, path, special_move=nil)
     start_pos = path[0]
     end_pos = path[-1]
+    # if !special-move
+      # normal behaviour
+    # else
+      # special_move(piece, path, special_move)
     empty(start_pos)
     if !empty?(end_pos)
       captured = get_piece(end_pos)

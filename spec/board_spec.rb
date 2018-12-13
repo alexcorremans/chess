@@ -1,6 +1,6 @@
 require './lib/board'
 
-fdescribe Board do
+describe Board do
   before do
     allow($stdout).to receive(:write)
   end

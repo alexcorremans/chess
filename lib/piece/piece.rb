@@ -14,18 +14,35 @@ class Piece
   def can_move?(board, endpoint)
     pos = board.get_position(self)
     path = get_path(pos, endpoint)
-    if path.nil?
-      return false
-    else
+    if !path.nil?
       return board.can_move?(self, path)
+    elsif path.nil? && special_moves?
+      special_move = get_special_move(pos, endpoint)
+      if !special_move.nil?
+        path = special_move[:path]
+        move_name = special_move[:name]
+        return board.can_move?(self, path, move_name)
+      else
+        return false
+      end
+    else
+      return false      
     end
   end
 
   def move(board, endpoint)
     pos = board.get_position(self)
     path = get_path(pos, endpoint)
-    new_board = board.move(self, path)
-    return new_board
+    if path.nil? 
+      special_move = get_special_move(pos, endpoint)
+      path = special_move[:path]
+      move_name = special_move[:name]
+      new_board = board.move(self, path, move_name)
+      return new_board
+    else
+      new_board = board.move(self, path)
+      return new_board
+    end
   end
 
   # end of public interface
@@ -48,9 +65,20 @@ class Piece
     end
   end
 
+  def special_moves?
+    !special_moves.empty?
+  end
+
   # subclasses may override
 
   def post_initialize
+  end
+
+  def special_moves
+    []
+  end
+
+  def get_special_move(a,b)
   end
 
   # subclasses should override
@@ -60,6 +88,6 @@ class Piece
   end
 
   def directions
-    []
-  end 
+    raise NotImplementedError, "#{self.class} should have implemented..."
+  end
 end
