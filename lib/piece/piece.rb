@@ -1,4 +1,5 @@
 require_relative '../square'
+require_relative '../move'
 require_relative 'directions'
 
 class Piece
@@ -16,13 +17,12 @@ class Piece
     return false if pos == endpoint
     path = get_path(pos, endpoint)
     if !path.nil?
-      return board.can_move?(self, path)
+      move = create_move(self, path)
+      return board.can_move?(move)
     elsif path.nil? && special_moves?
       special_move = get_special_move(pos, endpoint)
       if !special_move.nil?
-        path = special_move[:path]
-        move_name = special_move[:name]
-        return board.can_move?(self, path, move_name)
+        return board.can_move?(special_move)
       else
         return false
       end
@@ -36,12 +36,11 @@ class Piece
     path = get_path(pos, endpoint)
     if path.nil? 
       special_move = get_special_move(pos, endpoint)
-      path = special_move[:path]
-      move_name = special_move[:name]
-      new_board = board.move(self, path, move_name)
+      new_board = board.move(special_move)
       return new_board
     else
-      new_board = board.move(self, path)
+      move = create_move(self, path)
+      new_board = board.move(move)
       return new_board
     end
   end
@@ -58,6 +57,10 @@ class Piece
 
   def square(x,y,parent=nil)
     Square.new(x: x, y: y, parent: parent)
+  end
+
+  def create_move(piece, path, move_name=nil)
+    Move.new(piece: piece, path: path, name: move_name)
   end
 
   def convert_path(path)

@@ -21,7 +21,7 @@ class Board
     locate(piece)
   end
 
-  def can_move?(piece, path, special_move=nil)
+  def can_move?(move)
     # true or false depending on the rules. 
     # if !special-move
       # normal behaviour
@@ -32,11 +32,11 @@ class Board
     # note for castling: it's the king who initiates the move
   end
 
-  def move(piece, path, special_move=nil)
-    if !special_move
-      return normal_move(piece, path)
+  def move(move)
+    if move.name.nil?
+      return normal_move(move)
     else
-      return special_move(piece, path, special_move)
+      return special_move(move)
     end
   end
 
@@ -59,13 +59,13 @@ class Board
 
   private
 
-  def special_move(piece, path, move_name)
-    update_last_move(piece, path, move_name)
+  def special_move(move)
+    update_last_move(move)
   end
 
-  def normal_move(piece, path)
-    start_pos = path[0]
-    end_pos = path[-1]
+  def normal_move(move)
+    start_pos = move.path[0]
+    end_pos = move.path[-1]
     empty(start_pos)
     if !empty?(end_pos)
       captured = get_piece(end_pos)
@@ -73,8 +73,8 @@ class Board
       remove(captured)
       empty(end_pos)
     end
-    add(end_pos, piece)
-    update_last_move(piece, path)
+    add(end_pos, move.piece)
+    update_last_move(move)
     return self
   end
 
@@ -110,7 +110,7 @@ class Board
     pieces.detect { |piece| piece.type == 'king' && piece.team == team }
   end
 
-  def update_last_move(piece, path, move_name=nil)
-    @last_move = { piece: piece, path: path, name: move_name }
+  def update_last_move(move)
+    @last_move = move
   end
 end

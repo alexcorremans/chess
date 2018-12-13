@@ -5,6 +5,7 @@ shared_examples "a Piece" do
   it { is_expected.to respond_to(:move) }
   it { is_expected.to respond_to(:get_path) }
   it { is_expected.to respond_to(:square) }
+  it { is_expected.to respond_to(:create_move) }
   it { is_expected.to respond_to(:convert_path) }
   it { is_expected.to respond_to(:special_moves?) }
 end

@@ -1,6 +1,6 @@
 require './lib/board'
 
-describe Board do
+fdescribe Board do
   before do
     allow($stdout).to receive(:write)
   end
@@ -49,7 +49,7 @@ describe Board do
     end
   end
 
-  describe "#can_move?(piece, path)" do
+  describe "#can_move?(move)" do
     context "when the piece says it's a normal move" do
       context "when the path isn't empty where it should be" do
         it "returns false"
@@ -70,62 +70,70 @@ describe Board do
     end
   end
 
-  describe "#move(piece, path)" do
-    let(:path) { [[0,0],[1,1],[2,2]] }
-    
-    before do
-      allow(squares).to receive(:empty).with([0,0])
-      allow(squares).to receive(:add)
-    end
-    
-    context "in all cases" do
+  describe "#move(move)" do
+    context "when the piece says it's a normal move" do
+      let(:path) { [[0,0],[1,1],[2,2]] }
+      let(:piece) { 'a piece' }
+      let(:move) { Move.new(piece: piece, path: path) }
+      
       before do
-        allow(squares).to receive(:empty?).with([2,2]).and_return(true)
+        allow(squares).to receive(:empty).with([0,0])
+        allow(squares).to receive(:add)
+      end
+      
+      context "in all cases" do
+        before do
+          allow(squares).to receive(:empty?).with([2,2]).and_return(true)
+        end
+
+        it "sends a message to squares to empty the starting point" do
+          board.move(move)
+          expect(squares).to have_received(:empty).with([0,0])
+        end
+
+        it "sends a message to squares to add the piece to the endpoint" do
+          board.move(move)
+          expect(squares).to have_received(:add).with([2,2],'a piece')
+        end
+    
+        it "returns the new board state" do
+          new_board = board.move(move)
+          expect(new_board).to eql(board)
+        end
       end
 
-      it "sends a message to squares to empty the starting point" do
-        board.move('a piece', path)
-        expect(squares).to have_received(:empty).with([0,0])
-      end
+      context "when the move is a capture" do
+        let(:captured_piece) { instance_double(Piece) }
+        before do
+          allow(captured_piece).to receive(:type).and_return('knight')
+          allow(captured_piece).to receive(:colour).and_return('white')
+          allow(squares).to receive(:empty?).with([2,2]).and_return(false)
+          allow(squares).to receive(:get_piece).with([2,2]).and_return(captured_piece)
+          allow(pieces).to receive(:remove).with(captured_piece)
+          allow(squares).to receive(:empty).with([2,2])
 
-      it "sends a message to squares to add the piece to the endpoint" do
-        board.move('a piece', path)
-        expect(squares).to have_received(:add).with([2,2],'a piece')
-      end
-  
-      it "returns the new board state" do
-        new_board = board.move('a piece', path)
-        expect(new_board).to eql(board)
+        end
+
+        it "prints a message confirming the capture" do
+          expect{ board.move(move) }.to output(
+            "You captured a white knight!\n"
+          ).to_stdout
+        end
+
+        it "sends a message to pieces to remove the captured piece" do
+          board.move(move)
+          expect(pieces).to have_received(:remove).with(captured_piece)
+        end
+
+        it "sends a message to squares to empty the endpoint" do
+          board.move(move)
+          expect(squares).to have_received(:empty).with([2,2])
+        end
       end
     end
 
-    context "when the move is a capture" do
-      let(:captured_piece) { instance_double(Piece) }
-      before do
-        allow(captured_piece).to receive(:type).and_return('knight')
-        allow(captured_piece).to receive(:colour).and_return('white')
-        allow(squares).to receive(:empty?).with([2,2]).and_return(false)
-        allow(squares).to receive(:get_piece).with([2,2]).and_return(captured_piece)
-        allow(pieces).to receive(:remove).with(captured_piece)
-        allow(squares).to receive(:empty).with([2,2])
+    context "when the piece says it's a special move" do
 
-      end
-
-      it "prints a message confirming the capture" do
-        expect{ board.move('a piece', path) }.to output(
-          "You captured a white knight!\n"
-        ).to_stdout
-      end
-
-      it "sends a message to pieces to remove the captured piece" do
-        board.move('a piece', path)
-        expect(pieces).to have_received(:remove).with(captured_piece)
-      end
-
-      it "sends a message to squares to empty the endpoint" do
-        board.move('a piece', path)
-        expect(squares).to have_received(:empty).with([2,2])
-      end
     end
   end
 

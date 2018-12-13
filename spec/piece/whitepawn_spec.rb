@@ -76,20 +76,22 @@ describe WhitePawn do
       end
 
       context "when the pawn can move two steps" do
-        it "returns the path from a to b and the name of the special move" do
+        it "returns a move-like object that can be queried for the piece, the path from a to b and the name of the special move" do
           a = [4,1]
           b = [4,3]
-          result = { path: [[4,1],[4,2],[4,3]], name: 'two steps' }
-          expect(subject.get_special_move(a,b)).to eql(result)
+          expect(subject.get_special_move(a,b).piece).to eql(subject)
+          expect(subject.get_special_move(a,b).path).to eql([[4,1],[4,2],[4,3]])
+          expect(subject.get_special_move(a,b).name).to eql('two steps')
         end
       end
 
       context "when the pawn can make a capture" do
-        it "returns the path from a to b and the name of the special move" do
+        it "returns a move-like object that can be queried for the piece, the path from a to b and the name of the special move" do
           a = [4,2]
           b = [5,3]
-          result = { path: [[4,2],[5,3]], name: 'capture' }
-          expect(subject.get_special_move(a,b)).to eql(result)
+          expect(subject.get_special_move(a,b).piece).to eql(subject)
+          expect(subject.get_special_move(a,b).path).to eql([[4,2],[5,3]])
+          expect(subject.get_special_move(a,b).name).to eql('capture')
         end
       end
     end

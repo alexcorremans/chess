@@ -76,20 +76,22 @@ describe BlackPawn do
       end
 
       context "when the pawn can move two steps" do
-        it "returns the path from a to b and the name of the special move" do
+        it "returns a move-like object that can be queried for the piece, the path from a to b and the name of the special move" do
           a = [3,6]
           b = [3,4]
-          result = { path: [[3,6],[3,5],[3,4]], name: 'two steps' }
-          expect(subject.get_special_move(a,b)).to eql(result)
+          expect(subject.get_special_move(a,b).piece).to eql(subject)
+          expect(subject.get_special_move(a,b).path).to eql([[3,6],[3,5],[3,4]])
+          expect(subject.get_special_move(a,b).name).to eql('two steps')
         end
       end
 
       context "when the pawn can make a capture" do
-        it "returns the path from a to b and the name of the special move" do
+        it "returns a move-like object that can be queried for the piece, the path from a to b and the name of the special move" do
           a = [2,5]
           b = [1,4]
-          result = { path: [[2,5],[1,4]], name: 'capture' }
-          expect(subject.get_special_move(a,b)).to eql(result)
+          expect(subject.get_special_move(a,b).piece).to eql(subject)
+          expect(subject.get_special_move(a,b).path).to eql([[2,5],[1,4]])
+          expect(subject.get_special_move(a,b).name).to eql('capture')
         end
       end
     end

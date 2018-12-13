@@ -36,13 +36,12 @@ class BlackPawn < Piece
                 endpoint.y == 4 &&
                 endpoint.x == start.x
         path = [start, square(start.x, start.y - 1), endpoint]
-        return { path: convert_path(path), name: move_name }
       when 'capture'
         next unless (endpoint.x == start.x + 1 && endpoint.y == start.y - 1) ||
                     (endpoint.x == start.x - 1 && endpoint.y == start.y - 1)
         path = [start, endpoint]
-        return { path: convert_path(path), name: move_name }
       end
+      return create_move(self, convert_path(path), move_name)
     end
     nil
   end

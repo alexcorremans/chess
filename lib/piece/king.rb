@@ -37,6 +37,6 @@ class King < Piece
     else
       return nil
     end
-    return { path: convert_path(path), name: move_name }
+    return create_move(self, convert_path(path), move_name)
   end
 end

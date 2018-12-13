@@ -47,7 +47,7 @@ class PieceSpecialDouble < Piece
   def get_special_move(a,b)
     if a == [0,0] && b == [2,0]
       path = [[0,0],[1,0],[2,0]]
-      return { path: path, name: 'special move' }
+      return create_move(self, path, 'special')
     else
       return nil
     end
@@ -135,7 +135,7 @@ describe Piece do
 
   describe "#move(board, endpoint)" do
     context "when the endpoint is somewhere the piece can normally go" do
-      it "sends #move(self,path) to the board" do
+      it "sends #move to the board" do
         allow(board).to receive(:move)
         double.move(board, [0,1])
         expect(board).to have_received(:move)
@@ -148,7 +148,7 @@ describe Piece do
     end
 
     context "when the endpoint is somewhere the piece can't normally go" do
-      it "sends #move(self, path, move_name) to the board" do
+      it "sends #move to the board" do
         allow(board).to receive(:move)
         special_double.move(board, [2,0])
         expect(board).to have_received(:move)
