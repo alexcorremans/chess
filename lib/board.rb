@@ -4,9 +4,10 @@ require_relative 'pieces'
 class Board
   attr_reader :squares, :pieces
 
-  def initialize(squares:, pieces:)
+  def initialize(squares:, pieces:, last_move: nil)
     @squares = squares
     @pieces = pieces
+    @last_move = last_move
   end
 
   def display(team)
@@ -32,21 +33,11 @@ class Board
   end
 
   def move(piece, path, special_move=nil)
-    start_pos = path[0]
-    end_pos = path[-1]
-    # if !special-move
-      # normal behaviour
-    # else
-      # special_move(piece, path, special_move)
-    empty(start_pos)
-    if !empty?(end_pos)
-      captured = get_piece(end_pos)
-      puts "You captured a #{captured.colour} #{captured.type}!"
-      remove(captured)
-      empty(end_pos)
+    if !special_move
+      return normal_move(piece, path)
+    else
+      return special_move(piece, path, special_move)
     end
-    add(end_pos, piece)
-    return self
   end
 
   def check?(team)
@@ -67,6 +58,25 @@ class Board
   end
 
   private
+
+  def special_move(piece, path, move_name)
+    update_last_move(piece, path, move_name)
+  end
+
+  def normal_move(piece, path)
+    start_pos = path[0]
+    end_pos = path[-1]
+    empty(start_pos)
+    if !empty?(end_pos)
+      captured = get_piece(end_pos)
+      puts "You captured a #{captured.colour} #{captured.type}!"
+      remove(captured)
+      empty(end_pos)
+    end
+    add(end_pos, piece)
+    update_last_move(piece, path)
+    return self
+  end
 
   def add(location, piece)
     squares.add(location, piece)
@@ -98,5 +108,9 @@ class Board
 
   def get_king(team)
     pieces.detect { |piece| piece.type == 'king' && piece.team == team }
+  end
+
+  def update_last_move(piece, path, move_name=nil)
+    @last_move = { piece: piece, path: path, name: move_name }
   end
 end

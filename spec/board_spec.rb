@@ -50,12 +50,23 @@ describe Board do
   end
 
   describe "#can_move?(piece, path)" do
-    context "when the path isn't empty where it should be" do
-      it "returns false"
-    end
+    context "when the piece says it's a normal move" do
+      context "when the path isn't empty where it should be" do
+        it "returns false"
+      end
 
-    context "when the move is OK given the current board state" do
-      it "returns true"
+      context "when the move is OK given the current board state" do
+        it "returns true"
+      end
+    end
+    
+    context "when the piece says it's a special move" do
+      context "when the special move is OK" do
+        it "returns true"
+      end
+      context "when the special move is not OK" do
+        it "returns false"
+      end
     end
   end
 
