@@ -61,4 +61,54 @@ describe King do
       expect(subject.directions).to match_array(directions)
     end
   end
+
+  describe "#special_moves" do
+    it "supplies the allowed special moves" do
+      result = [
+        'castling'
+      ]
+      expect(subject.special_moves).to match_array(result)
+    end
+  end
+
+  describe "#get_special_move(a,b)" do
+    let(:white_king) { King.new('white') }
+    let(:black_king) { King.new('black') }
+
+    context "when b is outside of the board" do
+      it "returns nil" do
+        a = [6,0]
+        b = [8,0]
+        expect(white_king.get_special_move(a,b)).to be nil
+      end
+    end
+
+    context "when the requested move is one of the piece's special moves" do
+      context "when the king can do a long castling move" do
+        it "returns the path from a to b and the name of the special move" do
+          a = [4,0]
+          b = [6,0]
+          result = { path: [[4,0],[5,0],[6,0]], name: 'castling' }
+          expect(white_king.get_special_move(a,b)).to eql(result)
+        end
+      end
+
+      context "when the king can do a short castling move" do
+        it "returns the path from a to b and the name of the special move" do
+          a = [4,7]
+          b = [2,7]
+          result = { path: [[4,7],[3,7],[2,7]], name: 'castling' }
+          expect(black_king.get_special_move(a,b)).to eql(result)
+        end
+      end
+    end
+
+    context "when the requested move is not one of the piece's special moves" do
+      it "returns nil" do
+        a = [4,0]
+        b = [2,0]
+        expect(black_king.get_special_move(a,b)).to be nil
+      end
+    end
+  end
 end
