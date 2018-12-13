@@ -54,4 +54,52 @@ describe BlackPawn do
       expect(subject.directions).to match_array(directions)
     end
   end
+
+  describe "#special_moves" do
+    it "supplies the allowed special moves" do
+      result = [
+        'two steps',
+        'capture'
+      ]
+      expect(subject.special_moves).to match_array(result)
+    end
+  end
+
+  describe "#get_special_move(a,b)" do
+    context "when the requested move is one of the piece's special moves" do
+      context "when b is outside of the board" do
+        it "returns nil" do
+          a = [0,6]
+          b = [-1,5]
+          expect(subject.get_special_move(a,b)).to be nil
+        end
+      end
+
+      context "when the pawn can move two steps" do
+        it "returns the path from a to b and the name of the special move" do
+          a = [3,6]
+          b = [3,4]
+          result = { path: [[3,6],[3,5],[3,4]], name: 'two steps' }
+          expect(subject.get_special_move(a,b)).to eql(result)
+        end
+      end
+
+      context "when the pawn can make a capture" do
+        it "returns the path from a to b and the name of the special move" do
+          a = [2,5]
+          b = [1,4]
+          result = { path: [[2,5],[1,4]], name: 'capture' }
+          expect(subject.get_special_move(a,b)).to eql(result)
+        end
+      end
+    end
+
+    context "when the requested move is not one of the piece's special moves" do
+      it "returns nil" do
+        a = [2,5]
+        b = [2,3]
+        expect(subject.get_special_move(a,b)).to be nil
+      end
+    end
+  end
 end
