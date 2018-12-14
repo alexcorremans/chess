@@ -2,11 +2,12 @@ require_relative 'squares'
 require_relative 'pieces'
 
 class Board
-  attr_reader :squares, :pieces
+  attr_reader :squares, :pieces, :last_move, :previous_state
 
-  def initialize(squares:, pieces:, last_move: nil)
+  def initialize(squares:, pieces:, last_move: nil, previous_state: nil)
     @squares = squares
     @pieces = pieces
+    @previous_state = previous_state
     @last_move = last_move
   end
 
@@ -21,18 +22,27 @@ class Board
     locate(piece)
   end
 
-  def can_move?(move)
-    # true or false depending on the rules. 
-    # if !special-move
-      # normal behaviour
-    # else
-      # special_move_allowed?(piece, path, move_name)
-    # rule 1: if path.size > 3: check if the squares in the middle are empty
-    # other rules: castling, en passant, pawn two steps, pawn capture
-    # note for castling: it's the king who initiates the move
+  def move_allowed?(move)
+    # make sure all squares in the path are empty
+    if move.path.size > 2
+      return false unless path_empty?(move.path)
+    end
+    # check other rules
+    if move.name.nil?
+      return false unless normal_move_allowed?(move)
+    else
+      return false unless special_move_allowed?(move)
+    end
+    # make sure the move doesn't put the player's king in check
+    if update(move).check?(move.piece.colour)
+      undo
+      return false
+    else
+      return true
+    end
   end
 
-  def move(move)
+  def update(move)
     if move.name.nil?
       return normal_move(move)
     else
@@ -41,15 +51,15 @@ class Board
   end
 
   def check?(team)
-    # one of the opposite player's pieces can capture the team's king
+    # one of the opposite player's pieces can capture the player's king
     king = get_king(team)
-    # get opposite_team
+    opposite_team = switch_team(team)
     pieces = get_pieces(opposite_team)
-    can_move = can_move(pieces, locate(king))
-    !can_move.empty?
+    allowed_moves = allowed_moves(pieces, locate(king))
+    !allowed_moves.empty?
   end
 
-  def check_mate?(team)
+  def checkmate?(team)
     # king is in check
     # any move the player makes leaves the king in check
     # for all the pieces the player has, all the valid moves end with the king in check
@@ -57,13 +67,44 @@ class Board
     # for each valid move, look at the board: the king has to be in check still
   end
 
+  def stalemate?(team)
+  end
+
   private
 
-  def special_move(move)
-    update_last_move(move)
+  # methods related to board state
+
+  def update_last_move(move)
+    @last_move = move
+  end
+
+  def store_current_state
+    @previous_state = self
+  end
+
+  def undo
+    @board = previous_state
+    @previous_state = nil
+  end
+
+  def switch_team(team)
+    team == 'black' ? 'white' : 'black'
+  end
+
+  # methods related to move checking and making moves
+
+  def normal_move_allowed?(move)
+    end_pos = move.path[-1]
+    team = move.piece.colour
+    if empty?(end_pos)
+      return true 
+    else
+      return get_piece(end_pos).colour == team ? false : true
+    end
   end
 
   def normal_move(move)
+    store_current_state
     start_pos = move.path[0]
     end_pos = move.path[-1]
     empty(start_pos)
@@ -71,19 +112,75 @@ class Board
       captured = get_piece(end_pos)
       puts "You captured a #{captured.colour} #{captured.type}!"
       remove(captured)
-      empty(end_pos)
     end
-    add(end_pos, move.piece)
+    set_moved(move.piece)
+    update_square(end_pos, move.piece)
     update_last_move(move)
     return self
   end
 
-  def add(location, piece)
-    squares.add(location, piece)
+  def special_move_allowed?(move)
+    end_pos = move.path[-1]
+    team = move.piece.colour
+    case move.name
+    when 'two steps'
+      return empty?(end_pos) ? true : false
+    when 'capture'
+      if empty?(end_pos) # en passant
+        if last_move.name == 'two steps' && last_move.path[-1][0] == end_pos[0]
+          return true
+        else
+          return false
+        end
+      elsif get_piece(end_pos).colour != team # normal capture
+        return true
+      else
+        return false
+      end
+    when 'castling'
+      king = move.piece
+      return false if king.moved? || check?(team)
+      case end_pos[0]
+      when 2 # long castling
+        corner = [0, end_pos[1]]
+        middle_square = [3, end_pos[1]]
+        return false if !empty?([1, end_pos[1]])
+      when 6 # short castling
+        corner = [7, end_pos[1]]
+        middle_square = [5, end_pos[1]]
+      end
+      if !empty?(corner) && !get_piece(corner).moved? && king.can_move?(self, middle_square)
+        return true
+      else
+        return false
+      end
+    end
+  end
+
+  def special_move(move)
+    # yada yada...
+    update_last_move(move)
+  end
+
+  def create_move(piece, path, move_name=nil)
+    Move.new(piece: piece, path: path, name: move_name)
+  end
+
+  # methods interacting with squares
+
+  def update_square(location, piece)
+    squares.update(location, piece)
   end
 
   def locate(piece)
     squares.locate(piece)
+  end
+
+  def path_empty?(path)
+    path = path[1..-2]
+    path.all? do |coordinates|
+      empty?(coordinates)
+    end
   end
 
   def empty?(coordinates)
@@ -98,19 +195,21 @@ class Board
     squares.get_piece(location)
   end
 
+  # methods interacting with pieces
+
   def remove(piece)
     pieces.remove(piece)
   end
 
-  def can_move(pieces, endpoint)
+  def set_moved(piece)
+    pieces.set_moved(piece)
+  end
+
+  def allowed_moves(pieces, endpoint)
     pieces.select { |piece| piece.can_move?(board, endpoint) }
   end
 
   def get_king(team)
-    pieces.detect { |piece| piece.type == 'king' && piece.team == team }
-  end
-
-  def update_last_move(move)
-    @last_move = move
-  end
+    pieces.detect { |piece| piece.type == 'king' && piece.colour == team }
+  end  
 end

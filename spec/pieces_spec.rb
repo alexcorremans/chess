@@ -32,4 +32,11 @@ describe Pieces do
       expect(pieces).to match_array([white_queen, white_knight])
     end
   end
+
+  describe "#set_moved(piece)" do
+    it "updates the pieces array with the moved piece" do
+      pieces.set_moved(black_knight)
+      expect(pieces.get_pieces('knight', 'black')[0].moved?).to be true
+    end
+  end
 end

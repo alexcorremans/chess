@@ -21,4 +21,10 @@ class Pieces
   def remove(piece)
     @pieces -= [piece]
   end
+
+  def set_moved(moved_piece)
+    @pieces = self.map do |piece|
+      piece == moved_piece ? piece.set_moved : piece
+    end
+  end
 end

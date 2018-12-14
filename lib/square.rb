@@ -17,7 +17,7 @@ class Square
     contents.nil?
   end
 
-  def add(piece)
+  def update(piece)
     @contents = piece
     self
   end

@@ -24,16 +24,16 @@ describe Square do
     end
   end
 
-  describe "#add(piece)" do
+  describe "#update(piece)" do
     it "sets the contents of the square to the given piece" do
       square = Square.new(x: 5, y:4)
-      square.add("a chess piece")
+      square.update("a chess piece")
       expect(square.contents).to eql("a chess piece")
     end
 
     it "returns the modified square" do
       square = Square.new(x: 5, y: 4)
-      new_square = square.add("a chess piece")
+      new_square = square.update("a chess piece")
       expect(new_square).to eql(square)
     end
   end

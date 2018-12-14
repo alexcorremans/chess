@@ -25,23 +25,23 @@ class Squares
     search_squares_by_location(x,y).contents
   end
 
-  def add(location, piece)
+  def update(location, piece)
     x = location[0]
     y = location[1]
-    new_square = search_squares_by_location(x,y).add(piece)
-    update(new_square)
+    new_square = search_squares_by_location(x,y).update(piece)
+    update_self(new_square)
   end
 
   def empty(location)
     x = location[0]
     y = location[1]
     new_square = search_squares_by_location(x,y).empty
-    update(new_square)
+    update_self(new_square)
   end
 
   private
 
-  def update(new_square)
+  def update_self(new_square)
     @squares = self.map do |square|
       same_location?(square, new_square) ? new_square : square
     end

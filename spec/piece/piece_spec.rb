@@ -87,14 +87,14 @@ describe Piece do
     context "when the endpoint is somewhere the piece can normally go" do
       context "when the current board state allows the piece to go there" do
         it "returns true" do
-          allow(board).to receive(:can_move?).and_return(true)
+          allow(board).to receive(:move_allowed?).and_return(true)
           expect(double.can_move?(board, [0,1])).to be true
         end
       end
 
       context "when the current board state doesn't allow the piece to go there" do
         it "returns false" do
-          allow(board).to receive(:can_move?).and_return(false)
+          allow(board).to receive(:move_allowed?).and_return(false)
           expect(double.can_move?(board, [0,1])).to be false
         end
       end
@@ -105,14 +105,14 @@ describe Piece do
         context "when the requested move is one of the piece's special moves" do
           context "when the board allows it" do
             it "returns true" do
-              allow(board).to receive(:can_move?).and_return(true)
+              allow(board).to receive(:move_allowed?).and_return(true)
               expect(special_double.can_move?(board, [2,0])).to be true
             end
           end
     
           context "when the board doesn't allow it" do
             it "returns false" do
-              allow(board).to receive(:can_move?).and_return(false)
+              allow(board).to receive(:move_allowed?).and_return(false)
               expect(special_double.can_move?(board, [2,0])).to be false
             end
           end
@@ -135,31 +135,55 @@ describe Piece do
 
   describe "#move(board, endpoint)" do
     context "when the endpoint is somewhere the piece can normally go" do
-      it "sends #move to the board" do
-        allow(board).to receive(:move)
+      it "sends #update to the board" do
+        allow(board).to receive(:update)
         double.move(board, [0,1])
-        expect(board).to have_received(:move)
+        expect(board).to have_received(:update)
       end
       
       it "returns the new board state" do
-        allow(board).to receive(:move).and_return('new board')
+        allow(board).to receive(:update).and_return('new board')
         expect(double.move(board, [0,1])).to eql('new board')
       end
     end
 
     context "when the endpoint is somewhere the piece can't normally go" do
-      it "sends #move to the board" do
-        allow(board).to receive(:move)
+      it "sends #update to the board" do
+        allow(board).to receive(:update)
         special_double.move(board, [2,0])
-        expect(board).to have_received(:move)
+        expect(board).to have_received(:update)
       end
 
       it "returns the new board state" do
-        allow(board).to receive(:move).and_return('new board')
+        allow(board).to receive(:update).and_return('new board')
         expect(special_double.move(board, [2,0])).to eql('new board')
       end
     end    
   end
+
+  describe "#moved?" do
+    it "returns false when the piece hasn't moved before" do
+      expect(double.moved?).to be false
+    end
+
+    it "returns true when the piece has moved before" do
+      double.instance_variable_set(:@moved, true)
+      expect(double.moved?).to be true
+    end
+  end
+
+  describe "#set_moved" do
+    it "changes the @moved variable to true" do
+      double.set_moved
+      expect(double.moved?).to be true
+    end
+
+    it "returns the modified piece" do
+      new_piece = double.set_moved
+      expect(new_piece).to eql(double)
+    end
+  end
+ 
 
 # private method test
 

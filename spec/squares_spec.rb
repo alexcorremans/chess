@@ -32,11 +32,18 @@ describe Squares do
     end
   end
 
-  describe "#add(location, piece)" do
+  describe "#update(location, piece)" do
     it "adds the piece to the given location" do
       location = [1,2]
       piece = 'another_piece'
-      squares.add(location, piece)
+      squares.update(location, piece)
+      expect(squares.get_piece(location)).to eql('another_piece')
+    end
+
+    it "updates the piece at the given location" do
+      location = [3,4]
+      piece = 'another_piece'
+      squares.update(location, piece)
       expect(squares.get_piece(location)).to eql('another_piece')
     end
   end
