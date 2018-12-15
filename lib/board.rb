@@ -2,13 +2,14 @@ require_relative 'squares'
 require_relative 'pieces'
 
 class Board
-  attr_reader :squares, :pieces, :last_move, :previous_state
+  attr_reader :squares, :pieces, :last_move, :previous_state, :message
 
-  def initialize(squares:, pieces:, last_move: nil, previous_state: nil)
+  def initialize(squares:, pieces:, last_move: nil, previous_state: nil, message: nil)
     @squares = squares
     @pieces = pieces
     @previous_state = previous_state
     @last_move = last_move
+    @message = message
   end
 
   def display(team)
@@ -78,6 +79,10 @@ class Board
     @last_move = move
   end
 
+  def update_message(text)
+    @message = text
+  end
+
   def store_state
     @previous_state = self
   end
@@ -87,6 +92,7 @@ class Board
     @squares = previous.squares
     @pieces = previous.pieces
     @last_move = previous.last_move
+    @message = previous.message
     @previous_state = previous.previous_state
   end
 
@@ -113,7 +119,8 @@ class Board
     empty(start_pos)
     if !empty?(end_pos)
       captured = get_piece(end_pos)
-      puts "You captured a #{captured.colour} #{captured.type}!"
+      text = "You captured a #{captured.colour} #{captured.type}!"
+      update_message(text)
       remove(captured)
     end
     set_moved(move.piece)
