@@ -44,11 +44,14 @@ class Board
   end
 
   def update(move)
+    store_state
     if move.name.nil?
-      return normal_move(move)
+      normal_move(move)
     else
-      return special_move(move)
+      special_move(move)
     end
+    update_last_move(move)
+    return self
   end
 
   def check?(team)
@@ -112,23 +115,6 @@ class Board
     end
   end
 
-  def normal_move(move)
-    store_current_state
-    start_pos = move.path[0]
-    end_pos = move.path[-1]
-    empty(start_pos)
-    if !empty?(end_pos)
-      captured = get_piece(end_pos)
-      text = "You captured a #{captured.colour} #{captured.type}!"
-      update_message(text)
-      remove(captured)
-    end
-    set_moved(move.piece)
-    update_square(end_pos, move.piece)
-    update_last_move(move)
-    return self
-  end
-
   def special_move_allowed?(move)
     end_pos = move.path[-1]
     team = move.piece.colour
@@ -167,9 +153,24 @@ class Board
     end
   end
 
+  def normal_move(move)
+    start_pos = move.path[0]
+    end_pos = move.path[-1]
+    empty(start_pos)
+    if !empty?(end_pos)
+      captured = get_piece(end_pos)
+      text = "You captured a #{captured.colour} #{captured.type}!"
+      update_message(text)
+      remove(captured)
+    end
+    set_moved(move.piece)
+    update_square(end_pos, move.piece)
+  end
+
   def special_move(move)
+    set_moved(move.piece)
+    update_square(end_pos, move.piece)
     # yada yada...
-    update_last_move(move)
   end
 
   def create_move(piece, path, move_name=nil)
