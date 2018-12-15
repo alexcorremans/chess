@@ -78,13 +78,16 @@ class Board
     @last_move = move
   end
 
-  def store_current_state
+  def store_state
     @previous_state = self
   end
 
   def undo
-    @board = previous_state
-    @previous_state = nil
+    previous = previous_state
+    @squares = previous.squares
+    @pieces = previous.pieces
+    @last_move = previous.last_move
+    @previous_state = previous.previous_state
   end
 
   def switch_team(team)
