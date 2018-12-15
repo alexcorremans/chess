@@ -41,7 +41,7 @@ class Game
   end
 
   def switch_players
-    current_player == black_player ? white_player : black_player
+    @current_player = (current_player == black_player ? white_player : black_player)
   end
 
   def display_board

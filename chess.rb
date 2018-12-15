@@ -1,6 +1,6 @@
 require 'yaml'
 %w{config boardfactory player game}.each do |file|
-  require_relative file
+  require_relative "lib/#{file}"
 end
 
 def new_game

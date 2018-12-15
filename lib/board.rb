@@ -1,14 +1,14 @@
 require_relative 'squares'
 require_relative 'pieces'
+require 'yaml'
 
 class Board
-  attr_reader :squares, :pieces, :last_move, :previous_state
+  attr_reader :squares, :pieces, :last_move
   attr_accessor :messages
 
-  def initialize(squares:, pieces:, last_move: nil, previous_state: nil, messages: [])
+  def initialize(squares:, pieces:, last_move: nil, messages: [])
     @squares = squares
     @pieces = pieces
-    @previous_state = previous_state
     @last_move = last_move
     @messages = messages
   end
@@ -36,8 +36,7 @@ class Board
       return false unless special_move_allowed?(move)
     end
     # make sure the move doesn't put the player's king in check
-    if update(move).check?(move.piece.colour)
-      undo
+    if duplicate.update(move).check?(move.piece.colour)
       return false
     else
       return true
@@ -45,7 +44,6 @@ class Board
   end
 
   def update(move)
-    store_state
     if move.name.nil?
       normal_move(move)
     else
@@ -87,17 +85,8 @@ class Board
     @messages << text
   end
 
-  def store_state
-    @previous_state = self
-  end
-
-  def undo
-    previous = previous_state
-    @squares = previous.squares
-    @pieces = previous.pieces
-    @last_move = previous.last_move
-    @message = previous.message
-    @previous_state = previous.previous_state
+  def duplicate
+    YAML.load(YAML.dump(self))
   end
 
   def switch_team(team)
@@ -225,7 +214,7 @@ class Board
   end
 
   def locate(piece)
-    squares.locate(piece)
+    squares.locate(piece)    
   end
 
   def path_empty?(path)
@@ -258,7 +247,7 @@ class Board
   end
 
   def allowed_moves(pieces, endpoint)
-    pieces.select { |piece| piece.can_move?(board, endpoint) }
+    pieces.select { |piece| piece.can_move?(self, endpoint) }
   end
 
   def get_king(team)

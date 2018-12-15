@@ -17,7 +17,7 @@ class Player
         new_board = make_move(board, choice[:contents])
         if new_board.nil?
           puts "Not a valid move. Please try again:"
-          choice = get_input
+          choice = InputParser.get_input
         else
           return new_board
         end
@@ -38,13 +38,13 @@ class Player
   end
   
   def make_move(board, move)
-    piece_type = move[piece_type:]
-    endpoint = move[endpoint:]
+    piece_type = move[:piece_type]
+    endpoint = move[:endpoint]
     
-    pieces = get_pieces(piece_type, team)
+    pieces = get_pieces(board, piece_type, team)
     return nil if pieces.empty?
     
-    can_move = can_move(pieces, endpoint)
+    can_move = can_move(board, pieces, endpoint)
     if can_move.empty?
       return nil      
     elsif can_move.size > 1
@@ -57,12 +57,12 @@ class Player
     return board
   end
 
-  def get_pieces(piece_type, team)
+  def get_pieces(board, piece_type, team)
     board.get_pieces(piece_type, team)
   end
 
 
-  def can_move(pieces, endpoint)
+  def can_move(board, pieces, endpoint)
     pieces.select { |piece| piece.can_move?(board, endpoint) }
   end
 

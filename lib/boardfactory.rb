@@ -1,4 +1,5 @@
-%w{config board squares pieces square piece whitepawn blackpawn bishop rook knight queen king}.each { |l| require_relative l }
+%w{config board squares pieces square}.each { |l| require_relative l }
+%w{piece whitepawn blackpawn bishop rook knight queen king}.each { |l| require_relative "piece/#{l}" }
 
 module BoardFactory
   def self.build(config: STANDARD_CONFIG, board_class: Board)
@@ -9,7 +10,7 @@ module BoardFactory
       if !square_config[2].nil?
         piece = create_piece(square_config)
         pieces.push(piece)
-        square.add(piece)
+        square.update(piece)
       end
       squares.push(square)
     end
