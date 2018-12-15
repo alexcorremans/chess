@@ -26,5 +26,6 @@ class Pieces
     @pieces = self.map do |piece|
       piece == moved_piece ? piece.set_moved : piece
     end
+    return moved_piece.set_moved
   end
 end

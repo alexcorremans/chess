@@ -51,11 +51,12 @@ describe Board do
         let(:path) { path = [[0,0],[1,1],[2,2]] }
         let(:piece) { instance_double(Piece) }
         let(:move) { Move.new(path: path, piece: piece) }
+        let(:new_board) { instance_double(Board) }
         
         before do
           allow(piece).to receive(:colour).and_return('white')
-          allow(board).to receive(:update).and_return(board)
-          allow(board).to receive(:check?).and_return(false)
+          allow(board).to receive(:update).and_return(new_board)
+          allow(new_board).to receive(:check?).and_return(false)
         end
         it "returns false" do
           allow(squares).to receive(:empty?).with([1,1]).and_return(false)
@@ -67,11 +68,12 @@ describe Board do
         let(:path) { path = [[0,0],[1,1],[2,2]] }
         let(:piece) { instance_double(Piece) }
         let(:move) { Move.new(path: path, piece: piece) }
+        let(:new_board) { instance_double(Board) }
         
         before do
           allow(piece).to receive(:colour).and_return('white')
-          allow(board).to receive(:update).and_return(board)
-          allow(board).to receive(:check?).and_return(false)
+          allow(board).to receive(:update).and_return(new_board)
+          allow(new_board).to receive(:check?).and_return(false)
         end
 
         context "when one of the same player's pieces is at the endpoint" do
@@ -105,8 +107,11 @@ describe Board do
       end
       
       context "when the piece says it's a special move" do
+        let(:new_board) { instance_double(Board) }
+
         before do
-          allow(board).to receive(:update).and_return(board)
+          allow(board).to receive(:update).and_return(new_board)
+          allow(new_board).to receive(:check?).and_return(false)
         end
 
         context "when pawn - two steps" do
@@ -141,7 +146,6 @@ describe Board do
           let(:white_piece) { instance_double(WhitePawn) }
 
           before do
-            allow(board).to receive(:check?).and_return(false)
             allow(piece).to receive(:colour).and_return('black')
             allow(squares).to receive(:empty?).with([3,2]).and_return(true)
           end
@@ -169,7 +173,6 @@ describe Board do
           let(:black_piece) { instance_double(BlackPawn) }
 
           before do
-            allow(board).to receive(:check?).and_return(false)
             allow(piece).to receive(:colour).and_return('white')
             allow(black_piece).to receive(:colour).and_return('black')
             allow(squares).to receive(:empty?).with([5,3]).and_return(false)
@@ -341,12 +344,13 @@ describe Board do
         piece = instance_double(Piece)
         allow(piece).to receive(:colour).and_return('white')
         move = Move.new(path: path, piece: piece)
+        new_board = instance_double(Board)
 
         allow(squares).to receive(:empty?).with([1,1]).and_return(true)
         allow(squares).to receive(:empty?).with([2,2]).and_return(true)
 
-        allow(board).to receive(:update).and_return(board)
-        allow(board).to receive(:check?).and_return(true)
+        allow(board).to receive(:update).and_return(new_board)
+        allow(new_board).to receive(:check?).and_return(true)
         allow(board).to receive(:undo)
 
         expect(board.move_allowed?(move)).to be false
@@ -354,15 +358,16 @@ describe Board do
     end
   end
 
-  fdescribe "#update(move)" do
+  describe "#update(move)" do
     context "when the piece says it's a normal move" do
       let(:path) { [[0,0],[1,1],[2,2]] }
-      let(:piece) { 'a piece' }
+      let(:piece) { instance_double(Piece) }
       let(:move) { Move.new(piece: piece, path: path) }
       
       before do
+        allow(piece).to receive(:type).and_return('bishop')
         allow(squares).to receive(:empty).with([0,0])
-        allow(pieces).to receive(:set_moved).with(piece)
+        allow(pieces).to receive(:set_moved).with(piece).and_return(piece)
         allow(squares).to receive(:update)
       end
       
@@ -372,8 +377,8 @@ describe Board do
         end
 
         it "stores the current board state so it can revert to it later if necessary" do
+          expect(board).to receive(:store_state)
           board.update(move)
-          expect(board.previous_state).to eql(board)
         end
 
         it "sends a message to squares to empty the starting point" do
@@ -381,9 +386,19 @@ describe Board do
           expect(squares).to have_received(:empty).with([0,0])
         end
 
-        it "sends a message to squares to add the piece to the endpoint" do
+        it "sends a message to pieces to tell the piece that it has moved" do
           board.update(move)
-          expect(squares).to have_received(:update).with([2,2],'a piece')
+          expect(pieces).to have_received(:set_moved).with(piece)
+        end
+
+        it "sends a message to squares to add the moved piece to the endpoint" do
+          board.update(move)
+          expect(squares).to have_received(:update).with([2,2],piece)
+        end
+
+        it "stores text confirming the move so the Game can print it out later" do
+          board.update(move)
+          expect(board.messages[-1]).to eql("You move your bishop.")
         end
 
         it "updates the board's most recent move" do
@@ -407,21 +422,252 @@ describe Board do
           allow(pieces).to receive(:remove).with(captured_piece)
         end
 
-        it "stores a message confirming the capture so the Game can print it out later" do
-          board.update(move)
-          expect(board.message).to eql("You captured a white knight!")
-        end
-
         it "sends a message to pieces to remove the captured piece" do
           board.update(move)
           expect(pieces).to have_received(:remove).with(captured_piece)
+        end
+
+        it "stores text confirming the capture so the Game can print it out later" do
+          board.update(move)
+          expect(board.messages[-1]).to eql("You captured a knight!")
         end
       end
     end
 
     context "when the piece says it's a special move" do
-      
+      context "when pawn - two steps" do
+        let(:path) { [[4,1],[4,2],[4,3]] }
+        let(:piece) { instance_double(WhitePawn) }
+        let(:move) { Move.new(path: path, piece: piece, name: 'two steps') }
 
+        it "initiates the normal move process" do
+          allow(board).to receive(:normal_move)
+          board.update(move)
+          expect(board).to have_received(:normal_move).with(move)
+        end
+      end
+
+      context "when pawn - en passant" do
+        let(:path) { [[3,4],[4,5]] }
+        let(:white_pawn) { instance_double(WhitePawn) }
+        let(:move) { Move.new(path: path, piece: white_pawn, name: 'capture') }
+        let(:black_pawn) { instance_double(BlackPawn) }
+
+        before do
+          allow(squares).to receive(:empty?).with([4,5]).and_return(true)
+          allow(squares).to receive(:empty).with([3,4])
+          allow(pieces).to receive(:set_moved).with(white_pawn).and_return(white_pawn)
+          allow(squares).to receive(:update).with([4,5], white_pawn)
+          allow(black_pawn).to receive(:type).and_return('pawn')
+          allow(black_pawn).to receive(:colour).and_return('black')
+          allow(squares).to receive(:get_piece).with([4,4]).and_return(black_pawn)
+          allow(pieces).to receive(:remove).with(black_pawn)
+        end
+
+        it "stores the current board state so it can revert to it later if necessary" do
+          expect(board).to receive(:store_state)
+          board.update(move)
+        end
+
+        it "sends a message to squares to empty the starting point" do
+          board.update(move)
+          expect(squares).to have_received(:empty).with([3,4])
+        end
+
+        it "sends a message to pieces to tell the piece that it has moved" do
+          board.update(move)
+          expect(pieces).to have_received(:set_moved).with(white_pawn)
+        end
+
+        it "sends a message to squares to add the moved piece to the endpoint" do
+          board.update(move)
+          expect(squares).to have_received(:update).with([4,5], white_pawn)
+        end
+
+        it "stores text confirming the move so the Game can print it out later" do
+          board.update(move)
+          expect(board.messages[-2]).to eql("Your pawn moves en-passant.")
+        end
+
+        it "sends a message to pieces to remove the captured pawn" do
+          board.update(move)
+          expect(pieces).to have_received(:remove).with(black_pawn)
+        end
+
+        it "stores text confirming the capture so the Game can print it out later" do
+          board.update(move)
+          expect(board.messages[-1]).to eql("You captured a pawn!")
+        end
+
+        it "updates the board's most recent move" do
+          board.update(move)
+          expect(board.last_move).to eql(move)
+        end
+    
+        it "returns the new board state" do
+          new_board = board.update(move)
+          expect(new_board).to eql(board)
+        end
+      end
+
+      context "when pawn - normal capture" do
+        let(:path) { [[4,2],[5,3]] }
+        let(:pawn) { instance_double(WhitePawn) }
+        let(:move) { Move.new(path: path, piece: pawn, name: 'capture') }
+
+        it "initiates the normal move process" do
+          allow(squares).to receive(:empty?).with([5,3]).and_return(false)
+          allow(board).to receive(:normal_move)
+          board.update(move)
+          expect(board).to have_received(:normal_move).with(move)
+        end
+      end
+
+      context "when king - castling" do        
+        context "when long castling" do
+          let(:path) { [[4,7],[3,7],[2,7]] }
+          let(:king) { instance_double(King) }
+          let(:move) { Move.new(path: path, piece: king, name: 'castling') }
+          let(:rook) { instance_double(Rook) }
+
+          before do
+            allow(squares).to receive(:empty).with([4,7])
+            allow(pieces).to receive(:set_moved).with(king).and_return(king)
+            allow(squares).to receive(:update).with([2,7], king)
+            allow(squares).to receive(:get_piece).with([0,7]).and_return(rook)
+            allow(squares).to receive(:empty).with([0,7])
+            allow(pieces).to receive(:set_moved).with(rook).and_return(rook)
+            allow(squares).to receive(:update).with([3,7], rook)            
+          end
+
+          it "stores the current board state so it can revert to it later if necessary" do
+            expect(board).to receive(:store_state)
+            board.update(move)
+          end
+  
+          it "sends a message to squares to empty the starting point" do
+            board.update(move)
+            expect(squares).to have_received(:empty).with([4,7])
+          end
+  
+          it "sends a message to pieces to tell the king that it has moved" do
+            board.update(move)
+            expect(pieces).to have_received(:set_moved).with(king)
+          end
+  
+          it "sends a message to squares to add the moved king to the endpoint" do
+            board.update(move)
+            expect(squares).to have_received(:update).with([2,7], king)
+          end
+
+          it "sends a message to squares to find the rook" do
+            board.update(move)
+            expect(squares).to have_received(:get_piece).with([0,7])
+          end
+
+          it "sends a message to squares to empty the corner rook position" do
+            board.update(move)
+            expect(squares).to have_received(:empty).with([0,7])
+          end
+
+          it "sends a message to pieces to tell the rook that it has moved" do
+            board.update(move)
+            expect(pieces).to have_received(:set_moved).with(rook)
+          end
+
+          it "sends a message to squares to add the moved rook to its new position" do
+            board.update(move)
+            expect(squares).to have_received(:update).with([3,7], rook)
+          end          
+
+          it "stores text confirming the move so the Game can print it out later" do
+            board.update(move)
+            expect(board.messages[-1]).to eql("You move both your king and your rook in a castling move.")
+          end
+  
+          it "updates the board's most recent move" do
+            board.update(move)
+            expect(board.last_move).to eql(move)
+          end
+      
+          it "returns the new board state" do
+            new_board = board.update(move)
+            expect(new_board).to eql(board)
+          end
+        end
+
+        context "when short castling" do
+          let(:path) { [[4,0],[5,0],[6,0]] }
+          let(:king) { instance_double(King) }
+          let(:move) { Move.new(path: path, piece: king, name: 'castling') }
+          let(:rook) { instance_double(Rook) }
+
+          before do
+            allow(squares).to receive(:empty).with([4,0])
+            allow(pieces).to receive(:set_moved).with(king).and_return(king)
+            allow(squares).to receive(:update).with([6,0], king)
+            allow(squares).to receive(:get_piece).with([7,0]).and_return(rook)
+            allow(squares).to receive(:empty).with([7,0])
+            allow(pieces).to receive(:set_moved).with(rook).and_return(rook)
+            allow(squares).to receive(:update).with([5,0], rook)            
+          end
+
+          it "stores the current board state so it can revert to it later if necessary" do
+            expect(board).to receive(:store_state)
+            board.update(move)
+          end
+  
+          it "sends a message to squares to empty the starting point" do
+            board.update(move)
+            expect(squares).to have_received(:empty).with([4,0])
+          end
+  
+          it "sends a message to pieces to tell the king that it has moved" do
+            board.update(move)
+            expect(pieces).to have_received(:set_moved).with(king)
+          end
+  
+          it "sends a message to squares to add the moved king to the endpoint" do
+            board.update(move)
+            expect(squares).to have_received(:update).with([6,0], king)
+          end
+
+          it "sends a message to squares to find the rook" do
+            board.update(move)
+            expect(squares).to have_received(:get_piece).with([7,0])
+          end
+
+          it "sends a message to squares to empty the corner rook position" do
+            board.update(move)
+            expect(squares).to have_received(:empty).with([7,0])
+          end
+
+          it "sends a message to pieces to tell the rook that it has moved" do
+            board.update(move)
+            expect(pieces).to have_received(:set_moved).with(rook)
+          end
+
+          it "sends a message to squares to add the moved rook to its new position" do
+            board.update(move)
+            expect(squares).to have_received(:update).with([5,0], rook)
+          end          
+
+          it "stores text confirming the move so the Game can print it out later" do
+            board.update(move)
+            expect(board.messages[-1]).to eql("You move both your king and your rook in a castling move.")
+          end
+  
+          it "updates the board's most recent move" do
+            board.update(move)
+            expect(board.last_move).to eql(move)
+          end
+      
+          it "returns the new board state" do
+            new_board = board.update(move)
+            expect(new_board).to eql(board)
+          end
+        end
+      end
     end
   end
 

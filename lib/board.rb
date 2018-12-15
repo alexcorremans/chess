@@ -2,14 +2,15 @@ require_relative 'squares'
 require_relative 'pieces'
 
 class Board
-  attr_reader :squares, :pieces, :last_move, :previous_state, :message
+  attr_reader :squares, :pieces, :last_move, :previous_state
+  attr_accessor :messages
 
-  def initialize(squares:, pieces:, last_move: nil, previous_state: nil, message: nil)
+  def initialize(squares:, pieces:, last_move: nil, previous_state: nil, messages: [])
     @squares = squares
     @pieces = pieces
     @previous_state = previous_state
     @last_move = last_move
-    @message = message
+    @messages = messages
   end
 
   def display(team)
@@ -24,7 +25,7 @@ class Board
   end
 
   def move_allowed?(move)
-    # make sure all squares in the path are empty
+    # make sure all squares in the middle of the path are empty
     if move.path.size > 2
       return false unless path_empty?(move.path)
     end
@@ -82,8 +83,8 @@ class Board
     @last_move = move
   end
 
-  def update_message(text)
-    @message = text
+  def add_message(text)
+    @messages << text
   end
 
   def store_state
@@ -157,20 +158,60 @@ class Board
     start_pos = move.path[0]
     end_pos = move.path[-1]
     empty(start_pos)
-    if !empty?(end_pos)
-      captured = get_piece(end_pos)
-      text = "You captured a #{captured.colour} #{captured.type}!"
-      update_message(text)
-      remove(captured)
-    end
-    set_moved(move.piece)
-    update_square(end_pos, move.piece)
+    moved_piece = set_moved(move.piece)
+    update_square(end_pos, moved_piece)
+    add_message("You move your #{move.piece.type}.")
+    capture(end_pos) if !empty?(end_pos)
+  end
+
+  def capture(location)
+    captured = get_piece(location)
+    remove(captured)
+    text = "You captured a #{captured.type}!"
+    add_message(text)
   end
 
   def special_move(move)
-    set_moved(move.piece)
-    update_square(end_pos, move.piece)
-    # yada yada...
+    start_pos = move.path[0]
+    end_pos = move.path[-1]
+    case move.name
+    when 'two steps'
+      normal_move(move)
+    when 'capture'
+      if empty?(end_pos) # en passant
+        empty(start_pos)
+        if end_pos[1] < start_pos[1]
+          capture_pos = [end_pos[0], end_pos[1] + 1]
+        else
+          capture_pos = [end_pos[0], end_pos[1] - 1]
+        end
+        moved_piece = set_moved(move.piece)
+        update_square(end_pos, moved_piece)
+        add_message("Your pawn moves en-passant.")
+        capture(capture_pos)        
+      else # capture
+        normal_move(move)
+      end
+    when 'castling'
+      case end_pos[0]
+      when 2 # long castling
+        corner = [0, end_pos[1]]
+        end_pos_rook = [3, end_pos[1]]
+      when 6 # short castling
+        corner = [7, end_pos[1]]
+        end_pos_rook = [5, end_pos[1]]
+      end
+      # move the king
+      empty(start_pos)
+      moved_piece = set_moved(move.piece)
+      update_square(end_pos, moved_piece)
+      # move the rook
+      rook = get_piece(corner)
+      empty(corner)
+      moved_rook = set_moved(rook)
+      update_square(end_pos_rook, moved_rook)
+      add_message("You move both your king and your rook in a castling move.")
+    end
   end
 
   def create_move(piece, path, move_name=nil)

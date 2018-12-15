@@ -38,5 +38,9 @@ describe Pieces do
       pieces.set_moved(black_knight)
       expect(pieces.get_pieces('knight', 'black')[0].moved?).to be true
     end
+
+    it "returns the moved piece" do
+      expect(pieces.set_moved(black_knight)).to eql(black_knight.set_moved)
+    end
   end
 end
