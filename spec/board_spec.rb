@@ -1,6 +1,6 @@
 require './lib/board'
 
-describe Board do  
+fdescribe Board do  
   describe "#display(team)" do
     context "when it's White's turn" do
       it "displays the board from White's perspective"
@@ -51,11 +51,13 @@ describe Board do
         let(:path) { path = [[0,0],[1,1],[2,2]] }
         let(:piece) { instance_double(Piece) }
         let(:move) { Move.new(path: path, piece: piece) }
+        let(:copy) { instance_double(Board) }
         let(:new_board) { instance_double(Board) }
         
         before do
           allow(piece).to receive(:colour).and_return('white')
-          allow(board).to receive(:update).and_return(new_board)
+          allow(board).to receive(:duplicate).and_return(copy)
+          allow(copy).to receive(:update).and_return(new_board)
           allow(new_board).to receive(:check?).and_return(false)
         end
         it "returns false" do
@@ -68,11 +70,13 @@ describe Board do
         let(:path) { path = [[0,0],[1,1],[2,2]] }
         let(:piece) { instance_double(Piece) }
         let(:move) { Move.new(path: path, piece: piece) }
+        let(:copy) { instance_double(Board) }
         let(:new_board) { instance_double(Board) }
         
         before do
           allow(piece).to receive(:colour).and_return('white')
-          allow(board).to receive(:update).and_return(new_board)
+          allow(board).to receive(:duplicate).and_return(copy)
+          allow(copy).to receive(:update).and_return(new_board)
           allow(new_board).to receive(:check?).and_return(false)
         end
 
@@ -107,10 +111,12 @@ describe Board do
       end
       
       context "when the piece says it's a special move" do
+        let(:copy) { instance_double(Board) }
         let(:new_board) { instance_double(Board) }
 
         before do
-          allow(board).to receive(:update).and_return(new_board)
+          allow(board).to receive(:duplicate).and_return(copy)
+          allow(copy).to receive(:update).and_return(new_board)
           allow(new_board).to receive(:check?).and_return(false)
         end
 
@@ -120,7 +126,6 @@ describe Board do
           let(:move) { Move.new(path: path, piece: piece, name: 'two steps') }
 
           before do
-            allow(board).to receive(:check?).and_return(false)
             allow(piece).to receive(:colour).and_return('white')
             allow(squares).to receive(:empty?).with([4,2]).and_return(true)
           end
@@ -344,14 +349,15 @@ describe Board do
         piece = instance_double(Piece)
         allow(piece).to receive(:colour).and_return('white')
         move = Move.new(path: path, piece: piece)
+        copy = instance_double(Board)
         new_board = instance_double(Board)
 
         allow(squares).to receive(:empty?).with([1,1]).and_return(true)
         allow(squares).to receive(:empty?).with([2,2]).and_return(true)
 
-        allow(board).to receive(:update).and_return(new_board)
+        allow(board).to receive(:duplicate).and_return(copy)
+        allow(copy).to receive(:update).and_return(new_board)
         allow(new_board).to receive(:check?).and_return(true)
-        allow(board).to receive(:undo)
 
         expect(board.move_allowed?(move)).to be false
       end
@@ -374,11 +380,6 @@ describe Board do
       context "in all cases" do
         before do
           allow(squares).to receive(:empty?).with([2,2]).and_return(true)
-        end
-
-        it "stores the current board state so it can revert to it later if necessary" do
-          expect(board).to receive(:store_state)
-          board.update(move)
         end
 
         it "sends a message to squares to empty the starting point" do
@@ -464,11 +465,6 @@ describe Board do
           allow(pieces).to receive(:remove).with(black_pawn)
         end
 
-        it "stores the current board state so it can revert to it later if necessary" do
-          expect(board).to receive(:store_state)
-          board.update(move)
-        end
-
         it "sends a message to squares to empty the starting point" do
           board.update(move)
           expect(squares).to have_received(:empty).with([3,4])
@@ -539,11 +535,6 @@ describe Board do
             allow(pieces).to receive(:set_moved).with(rook).and_return(rook)
             allow(squares).to receive(:update).with([3,7], rook)            
           end
-
-          it "stores the current board state so it can revert to it later if necessary" do
-            expect(board).to receive(:store_state)
-            board.update(move)
-          end
   
           it "sends a message to squares to empty the starting point" do
             board.update(move)
@@ -610,11 +601,6 @@ describe Board do
             allow(squares).to receive(:empty).with([7,0])
             allow(pieces).to receive(:set_moved).with(rook).and_return(rook)
             allow(squares).to receive(:update).with([5,0], rook)            
-          end
-
-          it "stores the current board state so it can revert to it later if necessary" do
-            expect(board).to receive(:store_state)
-            board.update(move)
           end
   
           it "sends a message to squares to empty the starting point" do
