@@ -3,8 +3,7 @@ require_relative 'pieces'
 require 'yaml'
 
 class Board
-  attr_reader :squares, :pieces, :last_move
-  attr_accessor :messages
+  attr_reader :squares, :pieces, :last_move, :messages
 
   def initialize(squares:, pieces:, last_move: nil, messages: [])
     @squares = squares
@@ -24,6 +23,11 @@ class Board
     locate(piece)
   end
 
+  def clear_messages
+    @messages = []
+    self
+  end
+
   def move_allowed?(move)
     # make sure all squares in the middle of the path are empty
     if move.path.size > 2
@@ -36,14 +40,7 @@ class Board
       return false unless special_move_allowed?(move)
     end
     # make sure the move doesn't put the player's king in check
-    copy = duplicate
-    coordinates = self.locate(move.piece)
-    piece_copy = copy.get_piece(coordinates)
-    if piece_copy.move(copy, move.path[-1]).check?(move.piece.colour)
-      return false
-    else
-      return true
-    end
+    return !move_causes_check?(move)
   end
 
   def update(move)
@@ -159,6 +156,19 @@ class Board
       else
         return false
       end
+    end
+  end
+
+  def move_causes_check?(move)
+    board_copy = duplicate
+    coordinates = self.locate(move.piece)
+    piece_copy = board_copy.get_piece(coordinates)
+    team = move.piece.colour
+    end_pos = move.path[-1]
+    if piece_copy.move(board_copy, end_pos).check?(team)
+      return true
+    else
+      return false
     end
   end
 

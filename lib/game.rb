@@ -34,9 +34,8 @@ class Game
       elsif response == 'resign'
         resign
       else
-        new_board = response
+        new_board = process_messages(response)
         update_board(new_board)
-        print_messages
         break
       end
     end
@@ -54,8 +53,9 @@ class Game
     @board = new_board
   end
 
-  def print_messages
-    board.messages.each { |message| puts message }
+  def process_messages(response)
+    response.messages.each { |message| puts message }
+    response.clear_messages
   end
   
   def team

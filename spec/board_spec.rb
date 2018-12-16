@@ -49,25 +49,41 @@ describe Board do
     end
   end
 
+  describe "#clear_messages" do
+    let(:squares) { instance_double(Squares) }
+    let(:pieces) { instance_double(Pieces) }
+    let(:board) { Board.new(squares: squares, pieces: pieces, messages: ["test message"]) }
+
+    it "empties the messages variable" do
+      board.clear_messages
+      expect(board.messages).to eql([])
+    end
+
+    it "returns the new board state" do
+        new_board = board.clear_messages
+        expect(new_board).to eql(board)
+    end
+  end
+
   describe "#move_allowed?(move)" do
     let(:squares) { instance_double(Squares) }
     let(:pieces) { instance_double(Pieces) }
     let(:board) { Board.new(squares: squares, pieces: pieces) }
     
     context "when the move doesn't put the king in check" do
+      before do
+        allow(board).to receive(:move_causes_check?).and_return(false)
+      end
+
       context "when the path isn't empty where it should be" do
         let(:path) { path = [[0,0],[1,1],[2,2]] }
         let(:piece) { instance_double(Piece) }
         let(:move) { Move.new(path: path, piece: piece) }
-        let(:copy) { instance_double(Board) }
-        let(:new_board) { instance_double(Board) }
         
         before do
           allow(piece).to receive(:colour).and_return('white')
-          allow(board).to receive(:duplicate).and_return(copy)
-          allow(copy).to receive(:update).and_return(new_board)
-          allow(new_board).to receive(:check?).and_return(false)
         end
+
         it "returns false" do
           allow(squares).to receive(:empty?).with([1,1]).and_return(false)
           expect(board.move_allowed?(move)).to be false
@@ -78,14 +94,9 @@ describe Board do
         let(:path) { path = [[0,0],[1,1],[2,2]] }
         let(:piece) { instance_double(Piece) }
         let(:move) { Move.new(path: path, piece: piece) }
-        let(:copy) { instance_double(Board) }
-        let(:new_board) { instance_double(Board) }
         
         before do
           allow(piece).to receive(:colour).and_return('white')
-          allow(board).to receive(:duplicate).and_return(copy)
-          allow(copy).to receive(:update).and_return(new_board)
-          allow(new_board).to receive(:check?).and_return(false)
         end
 
         context "when one of the same player's pieces is at the endpoint" do
@@ -119,15 +130,6 @@ describe Board do
       end
       
       context "when the piece says it's a special move" do
-        let(:copy) { instance_double(Board) }
-        let(:new_board) { instance_double(Board) }
-
-        before do
-          allow(board).to receive(:duplicate).and_return(copy)
-          allow(copy).to receive(:update).and_return(new_board)
-          allow(new_board).to receive(:check?).and_return(false)
-        end
-
         context "when pawn - two steps" do
           let(:path) { [[4,1],[4,2],[4,3]] }
           let(:piece) { instance_double(WhitePawn) }
@@ -352,21 +354,17 @@ describe Board do
     end
 
     context "when the move puts the king in check" do
+      before do
+        allow(board).to receive(:move_causes_check?).and_return(true)
+      end
+
       it "returns false" do
         path = [[0,0],[1,1],[2,2]]
         piece = instance_double(Piece)
-        allow(piece).to receive(:colour).and_return('white')
         move = Move.new(path: path, piece: piece)
-        copy = instance_double(Board)
-        new_board = instance_double(Board)
-
+        allow(piece).to receive(:colour).and_return('white')
         allow(squares).to receive(:empty?).with([1,1]).and_return(true)
         allow(squares).to receive(:empty?).with([2,2]).and_return(true)
-
-        allow(board).to receive(:duplicate).and_return(copy)
-        allow(copy).to receive(:update).and_return(new_board)
-        allow(new_board).to receive(:check?).and_return(true)
-
         expect(board.move_allowed?(move)).to be false
       end
     end
