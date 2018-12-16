@@ -21,6 +21,7 @@ class Player
           choice = get_input
         elsif result == 'again'
           puts "You didn't make a choice. Please try again:"
+          choice = get_input
         else
           return result
         end
@@ -44,8 +45,8 @@ class Player
     InputParser.get_input
   end
 
-  def revert(coordinates)
-    InputParser.revert(coordinates)
+  def reverse_translate(coordinates)
+    InputParser.reverse_translate(coordinates)
   end  
   
   def make_move(board, move)
@@ -57,7 +58,7 @@ class Player
     if can_move.empty?
       return 'invalid'     
     elsif can_move.size > 1
-      piece = which_piece(can_move) 
+      piece = which_piece(board, can_move) 
       return 'again' if piece.nil?
     else
       piece = can_move.pop
@@ -70,6 +71,10 @@ class Player
     board.get_pieces(piece_type, team)
   end
 
+  def get_position(board, piece)
+    board.get_position(piece)
+  end
+
   def can_move(board, pieces, end_pos)
     pieces.select { |piece| piece.can_move?(board, end_pos) }
   end
@@ -78,15 +83,15 @@ class Player
     piece.move(board, end_pos)
   end
 
-  def which_piece(can_move)
+  def which_piece(board, can_move)
     puts "More than one piece can make that move."
     can_move.each do |piece|
-      coordinates = board.get_position(piece)
-      pos = revert(coordinates)
+      coordinates = get_position(board, piece)
+      pos = reverse_translate(coordinates)
       puts "Do you want to move the #{piece.type} that is currently at #{pos[0]}#{pos[1]}? Please answer (y/n)"
       reply = gets.chomp.downcase
       until reply == 'y' || reply == 'n'
-        "Please type 'y' to indicate you want to move the piece above, or 'n' to go on to the next piece that can make the move."
+        puts "Please type 'y' or 'n' to indicate whether you want to move the piece above."
         reply = gets.chomp.downcase
       end
       return piece if reply == 'y'

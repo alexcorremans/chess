@@ -42,7 +42,7 @@ module InputParser
 
   def get_end_pos(input)
     coordinates = input[regexp].split(/\s?/)
-    end_pos = convert(coordinates)
+    end_pos = translate(coordinates)
   end
 
   def get_piece(input)
@@ -56,7 +56,7 @@ module InputParser
     end
   end
 
-  def convert(coordinates)
+  def translate(coordinates)
     x = coordinates[0]
     y = coordinates[1]
     x = translations[x.downcase]
@@ -64,7 +64,7 @@ module InputParser
     [x,y]
   end
 
-  def revert(coordinates)
+  def reverse_translate(coordinates)
     x = coordinates[0]
     y = coordinates[1]
     x = reverse_translations[x]

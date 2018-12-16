@@ -17,14 +17,14 @@ describe Board do
     let(:board) { Board.new(squares: squares, pieces: pieces) }
 
     context "when no specific type provided" do
-      it "returns all pieces of the given colour" do
+      it "returns an array with all pieces of the given colour" do
         allow(pieces).to receive(:get_pieces).with('all','black').and_return('black pieces')
         expect(board.get_pieces('black')).to eql('black pieces')
       end
     end
 
     context "when asked for a specific type" do
-      it "returns all pieces of the given type and colour" do
+      it "returns an array with all pieces of the given type and colour" do
         allow(pieces).to receive(:get_pieces).with('knight', 'white').and_return('white knights')
         expect(board.get_pieces('knight','white')).to eql('white knights')
       end
