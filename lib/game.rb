@@ -33,8 +33,10 @@ class Game
         quit
       elsif response == 'resign'
         resign
-      else # response is the board with player move made
-        update_board(response)
+      else
+        new_board = response
+        update_board(new_board)
+        print_messages
         break
       end
     end
@@ -50,6 +52,10 @@ class Game
 
   def update_board(new_board)
     @board = new_board
+  end
+
+  def print_messages
+    board.messages.each { |message| puts message }
   end
   
   def team

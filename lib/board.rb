@@ -36,7 +36,10 @@ class Board
       return false unless special_move_allowed?(move)
     end
     # make sure the move doesn't put the player's king in check
-    if duplicate.update(move).check?(move.piece.colour)
+    copy = duplicate
+    coordinates = self.locate(move.piece)
+    piece_copy = copy.get_piece(coordinates)
+    if piece_copy.move(copy, move.path[-1]).check?(move.piece.colour)
       return false
     else
       return true
@@ -87,8 +90,8 @@ class Board
     player_pieces = get_pieces(team)
     moveable_pieces(player_pieces).empty?
   end
-  
-  private
+
+  protected
 
   # methods related to board state
 
@@ -128,6 +131,7 @@ class Board
       return empty?(end_pos) ? true : false
     when 'capture'
       if empty?(end_pos) # en passant
+        return false if last_move.nil?
         if last_move.name == 'two steps' && last_move.path[-1][0] == end_pos[0]
           return true
         else
@@ -163,9 +167,9 @@ class Board
     end_pos = move.path[-1]
     empty(start_pos)
     moved_piece = set_moved(move.piece)
-    update_square(end_pos, moved_piece)
     add_message("You move your #{move.piece.type}.")
     capture(end_pos) if !empty?(end_pos)
+    update_square(end_pos, moved_piece)
   end
 
   def capture(location)
