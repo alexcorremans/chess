@@ -1,6 +1,6 @@
 require './lib/pieces'
 
-fdescribe Pieces do
+describe Pieces do
   let(:white_queen) { Queen.new('white') }
   let(:black_knight) { Knight.new('black') }
   let(:white_knight) { Knight.new('white')}

@@ -1,6 +1,6 @@
 require './lib/board'
 
-fdescribe Board do  
+describe Board do  
   describe "#display(team)" do
     context "when it's White's turn" do
       it "displays the board from White's perspective"
@@ -658,12 +658,31 @@ fdescribe Board do
   end
 
   describe "#check?(team)" do
+    let(:king) { instance_double(King) }
+    let(:rook) { instance_double(Rook) }
+    let(:bishop) { instance_double(Bishop) }
+    let(:enemy_pieces) { [rook, bishop] }
+
+    before do
+      allow(pieces).to receive(:get_king).with('white').and_return(king)
+      allow(squares).to receive(:locate).with(king).and_return([0,0])
+      allow(pieces).to receive(:get_pieces).with('all', 'black').and_return(enemy_pieces)
+    end
+
     context "when the team's king is in check" do
-      it "returns true"
+      it "returns true" do
+        allow(rook).to receive(:can_move?).with(board, [0,0]).and_return(false)
+        allow(bishop).to receive(:can_move?).with(board, [0,0]).and_return(true)
+        expect(board.check?('white')).to be true
+      end
     end
 
     context "when the team's king is not in check" do
-      it "returns false"
+      it "returns false" do
+        allow(rook).to receive(:can_move?).with(board, [0,0]).and_return(false)
+        allow(bishop).to receive(:can_move?).with(board, [0,0]).and_return(false)
+        expect(board.check?('white')).to be false
+      end
     end
   end
 
