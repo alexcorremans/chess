@@ -77,7 +77,7 @@ describe Piece do
   
   before { allow(board).to receive(:get_position).and_return([0,0]) }
 
-  describe "#can_move?(board, endpoint)" do
+  describe "#can_move?(board, end_pos)" do
     context "when the endpoint is the same as the piece's current position" do
       it "returns false" do
         expect(double.can_move?(board, [0,0])).to be false
@@ -133,7 +133,7 @@ describe Piece do
     end
   end
 
-  describe "#move(board, endpoint)" do
+  describe "#move(board, end_pos)" do
     context "when the endpoint is somewhere the piece can normally go" do
       it "sends #update to the board" do
         allow(board).to receive(:update)

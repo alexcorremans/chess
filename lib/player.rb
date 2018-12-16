@@ -50,10 +50,10 @@ class Player
   
   def make_move(board, move)
     piece_type = move[:piece_type]
-    endpoint = move[:endpoint]
+    end_pos = move[:end_pos]
     pieces = get_pieces(board, piece_type, team)
     return 'invalid' if pieces.empty?
-    can_move = can_move(board, pieces, endpoint)
+    can_move = can_move(board, pieces, end_pos)
     if can_move.empty?
       return 'invalid'     
     elsif can_move.size > 1
@@ -62,7 +62,7 @@ class Player
     else
       piece = can_move.pop
     end
-    board = move_piece(piece, board, endpoint)
+    board = move_piece(piece, board, end_pos)
     return board
   end
 
@@ -70,12 +70,12 @@ class Player
     board.get_pieces(piece_type, team)
   end
 
-  def can_move(board, pieces, endpoint)
-    pieces.select { |piece| piece.can_move?(board, endpoint) }
+  def can_move(board, pieces, end_pos)
+    pieces.select { |piece| piece.can_move?(board, end_pos) }
   end
 
-  def move_piece(piece, board, endpoint)
-    piece.move(board, endpoint)
+  def move_piece(piece, board, end_pos)
+    piece.move(board, end_pos)
   end
 
   def which_piece(can_move)

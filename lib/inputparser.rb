@@ -31,18 +31,18 @@ module InputParser
 
   def move_parse(input)
     return nil unless has_coordinates?(input)
-    endpoint = get_endpoint(input)
+    end_pos = get_end_pos(input)
     piece_type = get_piece(input)
     return nil if piece_type.nil?
     { 
-      endpoint: endpoint, 
+      end_pos: end_pos, 
       piece_type: piece_type
     }
   end
 
-  def get_endpoint(input)
+  def get_end_pos(input)
     coordinates = input[regexp].split(/\s?/)
-    endpoint = convert(coordinates)
+    end_pos = convert(coordinates)
   end
 
   def get_piece(input)

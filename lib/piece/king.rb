@@ -2,9 +2,9 @@ require_relative 'piece'
 
 class King < Piece
   def try_path(a,b,direction)
-    start = square(a[0], a[1])
-    path = [start]
-    current_square = start.generate_child(direction)
+    start_sq = square(a[0], a[1])
+    path = [start_sq]
+    current_square = start_sq.generate_child(direction)
     return nil if current_square.nil?
     if current_square.x == b[0] && current_square.y == b[1]
       path << current_square
@@ -21,19 +21,19 @@ class King < Piece
   end
 
   def get_special_move(a,b)
-    start = square(a[0],a[1])
-    endpoint = square(b[0],b[1])
+    start_sq = square(a[0],a[1])
+    end_sq = square(b[0],b[1])
     move_name = special_moves[0]
     case colour
     when 'white'
-      return nil unless start.x == 4 && start.y == 0 && endpoint.y == 0  
+      return nil unless start_sq.x == 4 && start_sq.y == 0 && end_sq.y == 0  
     when 'black'
-      return nil unless start.x == 4 && start.y == 7 && endpoint.y == 7
+      return nil unless start_sq.x == 4 && start_sq.y == 7 && end_sq.y == 7
     end
-    if endpoint.x == 6 # short castling
-      path = [start, square(start.x + 1, start.y), endpoint]   
-    elsif endpoint.x == 2 # long castling
-      path = [start, square(start.x - 1, start.y), endpoint]
+    if end_sq.x == 6 # short castling
+      path = [start_sq, square(start_sq.x + 1, start_sq.y), end_sq]   
+    elsif end_sq.x == 2 # long castling
+      path = [start_sq, square(start_sq.x - 1, start_sq.y), end_sq]
     else
       return nil
     end

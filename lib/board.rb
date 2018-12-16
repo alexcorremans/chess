@@ -275,8 +275,8 @@ class Board
     pieces.set_moved(piece)
   end
 
-  def allowed_moves(pieces_array, endpoint)
-    pieces_array.select { |piece| piece.can_move?(self, endpoint) }
+  def allowed_moves(pieces_array, end_pos)
+    pieces_array.select { |piece| piece.can_move?(self, end_pos) }
   end
 
   def get_king(team)

@@ -13,15 +13,15 @@ class Piece
     post_initialize
   end
 
-  def can_move?(board, endpoint)
+  def can_move?(board, end_pos)
     pos = board.get_position(self)
-    return false if pos == endpoint
-    path = get_path(pos, endpoint)
+    return false if pos == end_pos
+    path = get_path(pos, end_pos)
     if !path.nil?
       move = create_move(self, path)
       return board.move_allowed?(move)
     elsif path.nil? && special_moves?
-      special_move = get_special_move(pos, endpoint)
+      special_move = get_special_move(pos, end_pos)
       if !special_move.nil?
         return board.move_allowed?(special_move)
       else
@@ -32,11 +32,11 @@ class Piece
     end
   end
 
-  def move(board, endpoint)
+  def move(board, end_pos)
     pos = board.get_position(self)
-    path = get_path(pos, endpoint)
+    path = get_path(pos, end_pos)
     if path.nil? 
-      special_move = get_special_move(pos, endpoint)
+      special_move = get_special_move(pos, end_pos)
       new_board = board.update(special_move)
       return new_board
     else

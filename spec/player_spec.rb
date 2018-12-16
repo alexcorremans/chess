@@ -1,6 +1,6 @@
 require './lib/player'
 
-fdescribe Player do
+describe Player do
 
 
   describe "#play" do
@@ -19,7 +19,8 @@ fdescribe Player do
     end
 
     context "when the player wants to make a move" do
-      
+      let(:move) { { end_pos: [4,3], piece_type: 'pawn' } }
+      let(:choice) { }
 
     end
 
