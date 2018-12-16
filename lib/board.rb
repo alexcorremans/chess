@@ -53,6 +53,16 @@ class Board
     return self
   end
 
+  def moveable_pieces(pieces_array)
+    moveable_pieces = []
+    squares.each do |square|
+      pos = square.coordinates
+      allowed_moves = allowed_moves(pieces_array, pos)
+      moveable_pieces += allowed_moves
+    end
+    moveable_pieces
+  end
+
   def check?(team)
     # one of the opposite player's pieces can capture the player's king
     king = get_king(team)
@@ -63,16 +73,21 @@ class Board
   end
 
   def checkmate?(team)
-    # king is in check
-    # any move the player makes leaves the king in check
-    # for all the pieces the player has, all the valid moves end with the king in check
-    # for all the pieces the player has, get all the valid moves (something with iterating over can_move for each square)
-    # for each valid move, look at the board: the king has to be in check still
+    # the king is in check
+    return false if !check?(team)
+    # the player has no possible moves
+    player_pieces = get_pieces(team)
+    moveable_pieces(player_pieces).empty?
   end
 
   def stalemate?(team)
+    # the king is not in check
+    return false if check?(team)
+    # the player has no possible moves
+    player_pieces = get_pieces(team)
+    moveable_pieces(player_pieces).empty?
   end
-
+  
   private
 
   # methods related to board state
@@ -252,5 +267,5 @@ class Board
 
   def get_king(team)
     pieces.get_king(team)
-  end  
+  end
 end
