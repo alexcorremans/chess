@@ -3,21 +3,22 @@ require_relative 'inputparser'
 class Player
   attr_reader :team, :name
   
-  def initialize(team:)
-    @team = team
-    @name = set_name
+  def initialize(**opts)
+    @team = opts[:team]
+    @name = opts[:name] || set_name
   end
 
   def play(board)
-    choice = InputParser.get_input
+    choice = get_input
     loop do
-      if choice[:type] == 'other'
+      case choice[:type]
+      when 'other'
         return choice[:contents]
-      elsif choice[:type] == 'move'
+      when 'move'
         result = make_move(board, choice[:contents])
         if result == 'invalid'
           puts "Not a valid move. Please try again:"
-          choice = InputParser.get_input
+          choice = get_input
         elsif result == 'again'
           puts "You didn't make a choice. Please try again:"
         else
@@ -38,6 +39,14 @@ class Player
     end
     name
   end
+
+  def get_input
+    InputParser.get_input
+  end
+
+  def revert(coordinates)
+    InputParser.revert(coordinates)
+  end  
   
   def make_move(board, move)
     piece_type = move[:piece_type]
@@ -61,7 +70,6 @@ class Player
     board.get_pieces(piece_type, team)
   end
 
-
   def can_move(board, pieces, endpoint)
     pieces.select { |piece| piece.can_move?(board, endpoint) }
   end
@@ -74,7 +82,7 @@ class Player
     puts "More than one piece can make that move."
     can_move.each do |piece|
       coordinates = board.get_position(piece)
-      pos = InputParser.revert(coordinates)
+      pos = revert(coordinates)
       puts "Do you want to move the #{piece.type} that is currently at #{pos[0]}#{pos[1]}? Please answer (y/n)"
       reply = gets.chomp.downcase
       until reply == 'y' || reply == 'n'
