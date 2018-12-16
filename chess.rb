@@ -4,7 +4,7 @@ require 'yaml'
 end
 
 def new_game
-  puts "Welcome to chess!"
+  puts "Let's play chess!"
   board = BoardFactory.build
   white = Player.new(team: "white")
   black = Player.new(team: "black")
@@ -16,7 +16,7 @@ def saved_game
   puts "What name did you save your game as?"
     begin
       filename = gets.chomp.downcase
-      game = YAML.load_file("../saved_games/#{filename}.yml")
+      game = YAML.load_file("saved_games/#{filename}.yml")
       game.play
     rescue
       puts "No saved files with that name. Try again:"

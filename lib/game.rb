@@ -98,7 +98,7 @@ class Game
   def save
     puts "Enter a filename so you can retrieve your saved game later:"
     filename = gets.chomp.downcase
-    File.open("../saved_games/#{filename}.yml", "w") do |file|
+    File.open("./saved_games/#{filename}.yml", "w") do |file|
       file.write(YAML.dump(self))
     end
     puts "Game saved."
