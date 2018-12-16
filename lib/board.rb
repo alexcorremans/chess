@@ -56,9 +56,9 @@ class Board
   def check?(team)
     # one of the opposite player's pieces can capture the player's king
     king = get_king(team)
-    opposite_team = switch_team(team)
-    pieces = get_pieces(opposite_team)
-    allowed_moves = allowed_moves(pieces, locate(king))
+    enemy_team = switch_team(team)
+    enemy_pieces = get_pieces(enemy_team)
+    allowed_moves = allowed_moves(enemy_pieces, locate(king))
     !allowed_moves.empty?
   end
 
@@ -246,11 +246,11 @@ class Board
     pieces.set_moved(piece)
   end
 
-  def allowed_moves(pieces, endpoint)
-    pieces.select { |piece| piece.can_move?(self, endpoint) }
+  def allowed_moves(pieces_array, endpoint)
+    pieces_array.select { |piece| piece.can_move?(self, endpoint) }
   end
 
   def get_king(team)
-    pieces.detect { |piece| piece.type == 'king' && piece.colour == team }
+    pieces.get_king(team)
   end  
 end

@@ -18,6 +18,10 @@ class Pieces
     end
   end
 
+  def get_king(team)
+    find { |piece| piece.type == 'king' && piece.colour == team }
+  end
+
   def remove(piece)
     @pieces -= [piece]
   end

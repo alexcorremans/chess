@@ -1,10 +1,11 @@
 require './lib/pieces'
 
-describe Pieces do
+fdescribe Pieces do
   let(:white_queen) { Queen.new('white') }
   let(:black_knight) { Knight.new('black') }
   let(:white_knight) { Knight.new('white')}
-  let(:pieces) { Pieces.new([white_queen, black_knight, white_knight]) }
+  let(:black_king) { King.new('black') }
+  let(:pieces) { Pieces.new([white_queen, black_knight, white_knight, black_king]) }
     
   describe "#get_pieces(type, colour)" do
     context "when asked for a specific type" do
@@ -26,10 +27,16 @@ describe Pieces do
     end
   end
 
+  describe "#get_king(team)" do
+    it "returns the king of the given colour" do
+      expect(pieces.get_king('black')).to eql(black_king)
+    end
+  end
+
   describe "#remove(piece)" do
     it "removes the given piece from the array" do
       pieces.remove(black_knight)
-      expect(pieces).to match_array([white_queen, white_knight])
+      expect(pieces).to match_array([white_queen, white_knight, black_king])
     end
   end
 
