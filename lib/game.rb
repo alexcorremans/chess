@@ -11,10 +11,8 @@ class Game
   def play
     loop do
       turn
-      # this might have to go somewhere else:
-      # if board.check?(team): print message saying 'Check!'
-      # check whether it's the end of the game (checkmate? stalemate?) and end the game if that's the case
       switch_players
+      check_board
     end    
   end
 
@@ -38,6 +36,19 @@ class Game
         update_board(new_board)
         break
       end
+    end
+  end
+
+  def check_board
+    if check?(team)
+      puts "Check!"
+    elsif checkmate?(team)
+      puts "Checkmate!"
+      switch_players
+      victory
+    elsif stalemate?(team)
+      puts "Stalemate!"
+      draw
     end
   end
 
@@ -110,7 +121,28 @@ class Game
   end
 
   def resign
-    # to be implemented
+    puts "Are you sure you want to resign from the game (y/n)?"
+    input = gets.chomp.downcase
+    loop do
+      if input == 'y'
+        switch_players
+        victory
+      elsif input =='n'
+        break
+      else
+        puts "Please enter 'y' to resign or 'n' to go back"
+        input = gets.chomp.downcase
+      end
+    end
+  end
+
+  def victory
+    puts "#{player_name} wins! Thanks for playing."
+    exit
+  end
+
+  def draw
+    puts "It's a draw! Thanks for playing."
     exit
   end
 
@@ -122,6 +154,7 @@ class Game
     board.checkmate?(team)
   end
 
-  def stalemate?
+  def stalemate?(team)
+    board.stalemate?(team)
   end
 end
