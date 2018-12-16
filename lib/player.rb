@@ -14,12 +14,14 @@ class Player
       if choice[:type] == 'other'
         return choice[:contents]
       elsif choice[:type] == 'move'
-        new_board = make_move(board, choice[:contents])
-        if new_board.nil?
+        result = make_move(board, choice[:contents])
+        if result == 'invalid'
           puts "Not a valid move. Please try again:"
           choice = InputParser.get_input
+        elsif result == 'again'
+          puts "You didn't make a choice. Please try again:"
         else
-          return new_board
+          return result
         end
       end
     end
@@ -40,19 +42,17 @@ class Player
   def make_move(board, move)
     piece_type = move[:piece_type]
     endpoint = move[:endpoint]
-    
     pieces = get_pieces(board, piece_type, team)
-    return nil if pieces.empty?
-    
+    return 'invalid' if pieces.empty?
     can_move = can_move(board, pieces, endpoint)
     if can_move.empty?
-      return nil      
+      return 'invalid'     
     elsif can_move.size > 1
       piece = which_piece(can_move) 
+      return 'again' if piece.nil?
     else
       piece = can_move.pop
     end
-    
     board = move_piece(piece, board, endpoint)
     return board
   end
@@ -71,7 +71,18 @@ class Player
   end
 
   def which_piece(can_move)
-    # ask which of the pieces needs to move and return the correct piece
-    # maybe offer an option to change your mind? 
+    puts "More than one piece can make that move."
+    can_move.each do |piece|
+      coordinates = board.get_position(piece)
+      pos = InputParser.revert(coordinates)
+      puts "Do you want to move the #{piece.type} that is currently at #{pos[0]}#{pos[1]}? Please answer (y/n)"
+      reply = gets.chomp.downcase
+      until reply == 'y' || reply == 'n'
+        "Please type 'y' to indicate you want to move the piece above, or 'n' to go on to the next piece that can make the move."
+        reply = gets.chomp.downcase
+      end
+      return piece if reply == 'y'
+    end
+    nil    
   end
 end

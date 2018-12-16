@@ -64,6 +64,14 @@ module InputParser
     [x,y]
   end
 
+  def revert(coordinates)
+    x = coordinates[0]
+    y = coordinates[1]
+    x = reverse_translations[x]
+    y = y + 1
+    [x,y]
+  end
+
   def options
     %w{help save quit resign}
   end
@@ -86,6 +94,19 @@ module InputParser
       'f' => 5,
       'g' => 6,
       'h' => 7
+    }
+  end
+
+  def reverse_translations
+    {
+      0 => 'a',
+      1 => 'b',
+      2 => 'c',
+      3 => 'd',
+      4 => 'e',
+      5 => 'f',
+      6 => 'g',
+      7 => 'h'
     }
   end
 end
