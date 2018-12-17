@@ -25,6 +25,17 @@ module InputParser
     end
   end
 
+  def choose_piece(piece_type, coordinates)
+    pos = reverse_translate(coordinates)
+    puts "Do you want to move the #{piece_type} that is currently at #{pos[0]}#{pos[1]}? Please answer (y/n)"
+    reply = gets.chomp.downcase
+    until reply == 'y' || reply == 'n'
+      puts "Please type 'y' or 'n' to indicate whether you want to move the piece above."
+      reply = gets.chomp.downcase
+    end
+    reply
+  end
+
   def has_coordinates?(input)
     input =~ regexp
   end

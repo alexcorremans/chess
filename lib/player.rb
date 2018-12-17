@@ -45,9 +45,9 @@ class Player
     InputParser.get_input
   end
 
-  def reverse_translate(coordinates)
-    InputParser.reverse_translate(coordinates)
-  end  
+  def choose_piece(piece_type, coordinates)
+    InputParser.choose_piece(piece_type, coordinates)
+  end
   
   def make_move(board, move)
     piece_type = move[:piece_type]
@@ -87,13 +87,7 @@ class Player
     puts "More than one piece can make that move."
     can_move.each do |piece|
       coordinates = get_position(board, piece)
-      pos = reverse_translate(coordinates)
-      puts "Do you want to move the #{piece.type} that is currently at #{pos[0]}#{pos[1]}? Please answer (y/n)"
-      reply = gets.chomp.downcase
-      until reply == 'y' || reply == 'n'
-        puts "Please type 'y' or 'n' to indicate whether you want to move the piece above."
-        reply = gets.chomp.downcase
-      end
+      reply = choose_piece(piece.type, coordinates)
       return piece if reply == 'y'
     end
     nil    
