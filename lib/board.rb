@@ -110,16 +110,24 @@ class Board
   # methods related to move checking and making moves
 
   def normal_move_allowed?(move)
+    # puts "checking if #{move.path[0]} to #{move.path[-1]} is allowed for #{move.piece.colour} #{move.piece.type}"
     end_pos = move.path[-1]
     team = move.piece.colour
     if empty?(end_pos)
       return true 
     else
-      return get_piece(end_pos).colour == team ? false : true
+      if get_piece(end_pos).colour == team # a piece can't capture a piece of the same team
+        return false
+      elsif move.piece.type == 'pawn' # a pawn can't make its normal move if there is an enemy piece in front of it
+        return false
+      else
+        return true
+      end
     end
   end
 
   def special_move_allowed?(move)
+    # puts "checking if #{move.name} from #{move.path[0]} to #{move.path[-1]} is allowed for #{move.piece.colour} #{move.piece.type}"
     end_pos = move.path[-1]
     team = move.piece.colour
     case move.name
