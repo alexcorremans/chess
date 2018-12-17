@@ -77,22 +77,6 @@ class Board
     return moves.all? do |move|
       move_causes_check?(move)
     end
-=begin
-      if !any_moves?(player_pieces, pos) # player has no possible moves
-        puts "no possible moves for #{team}"
-        return true
-      else
-        # there are possible moves
-        # if all these moves end with the king still in check then return true
-        moves = allowed_moves(player_pieces, pos)
-        puts "allowed moves for #{team}"
-        return moves.all? do |move|
-          move_causes_check?(move)
-        end
-      end 
-    end
-    true
-=end
   end
 
   def stalemate?(team)
@@ -316,6 +300,6 @@ class Board
   end
 
   def allowed_moves(pieces_array, end_pos)
-    pieces.select { |piece| piece.can_move?(self, end_pos) }
+    pieces_array.select { |piece| piece.can_move?(self, end_pos) }
   end
 end
