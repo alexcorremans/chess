@@ -1,0 +1,519 @@
+--- !ruby/object:Board
+squares: !ruby/object:Squares
+  squares:
+  - !ruby/object:Square
+    x: 0
+    y: 0
+    contents: &1 !ruby/object:Rook
+      colour: white
+      type: rook
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 0
+    contents: &2 !ruby/object:Knight
+      colour: white
+      type: knight
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 0
+    contents: &3 !ruby/object:Bishop
+      colour: white
+      type: bishop
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 0
+    contents: &4 !ruby/object:Queen
+      colour: white
+      type: queen
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 0
+    contents: &5 !ruby/object:King
+      colour: white
+      type: king
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 0
+    contents: &6 !ruby/object:Bishop
+      colour: white
+      type: bishop
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 0
+    contents: &7 !ruby/object:Knight
+      colour: white
+      type: knight
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 0
+    contents: &8 !ruby/object:Rook
+      colour: white
+      type: rook
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 1
+    contents: &9 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 1
+    contents: &10 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 1
+    contents: &11 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 1
+    contents: &12 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 1
+    contents: &13 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 1
+    contents: &14 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 1
+    contents: &15 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 1
+    contents: &16 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 2
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 3
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 4
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 5
+    contents: 
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 6
+    contents: &17 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 6
+    contents: &18 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 6
+    contents: &19 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 6
+    contents: &20 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 6
+    contents: &21 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 6
+    contents: &22 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 6
+    contents: &23 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 6
+    contents: &24 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 0
+    y: 7
+    contents: &25 !ruby/object:Rook
+      colour: black
+      type: rook
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 7
+    contents: &26 !ruby/object:Knight
+      colour: black
+      type: knight
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 7
+    contents: &27 !ruby/object:Bishop
+      colour: black
+      type: bishop
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 7
+    contents: &28 !ruby/object:Queen
+      colour: black
+      type: queen
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 4
+    y: 7
+    contents: &29 !ruby/object:King
+      colour: black
+      type: king
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 5
+    y: 7
+    contents: &30 !ruby/object:Bishop
+      colour: black
+      type: bishop
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 6
+    y: 7
+    contents: &31 !ruby/object:Knight
+      colour: black
+      type: knight
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 7
+    y: 7
+    contents: &32 !ruby/object:Rook
+      colour: black
+      type: rook
+      moved: false
+    child: 
+    parent: 
+pieces: !ruby/object:Pieces
+  pieces:
+  - *1
+  - *2
+  - *3
+  - *4
+  - *5
+  - *6
+  - *7
+  - *8
+  - *9
+  - *10
+  - *11
+  - *12
+  - *13
+  - *14
+  - *15
+  - *16
+  - *17
+  - *18
+  - *19
+  - *20
+  - *21
+  - *22
+  - *23
+  - *24
+  - *25
+  - *26
+  - *27
+  - *28
+  - *29
+  - *30
+  - *31
+  - *32
+last_move: 
+messages: []

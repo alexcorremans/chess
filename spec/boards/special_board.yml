@@ -1,0 +1,47 @@
+--- !ruby/object:Board
+squares: !ruby/object:Squares
+  squares:
+  - !ruby/object:Square
+    x: 0
+    y: 0
+    contents: &1 !ruby/object:Queen
+      colour: white
+      type: queen
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 1
+    y: 0
+    contents: &2 !ruby/object:King
+      colour: black
+      type: king
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 2
+    y: 0
+    contents: &3 !ruby/object:WhitePawn
+      colour: white
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+  - !ruby/object:Square
+    x: 3
+    y: 0
+    contents: &4 !ruby/object:BlackPawn
+      colour: black
+      type: pawn
+      moved: false
+    child: 
+    parent: 
+pieces: !ruby/object:Pieces
+  pieces:
+  - *1
+  - *2
+  - *3
+  - *4
+last_move: 
+messages: []

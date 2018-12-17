@@ -2,7 +2,9 @@
 %w{piece whitepawn blackpawn bishop rook knight queen king}.each { |l| require_relative "piece/#{l}" }
 
 module BoardFactory
-  def self.build(config: STANDARD_CONFIG, board_class: Board)
+  extend self
+
+  def build(config: STANDARD_CONFIG, board_class: Board)
     squares = []
     pieces = []
     config.each do |square_config|
@@ -20,11 +22,11 @@ module BoardFactory
     )
   end
 
-  def self.create_square(square_config, square_class: Square)
+  def create_square(square_config, square_class: Square)
     square_class.new(x: square_config[0], y: square_config[1])
   end
 
-  def self.create_piece(square_config)
+  def create_piece(square_config)
     const_get(square_config[2]).new(square_config.fetch(3, nil))
   end
 end
