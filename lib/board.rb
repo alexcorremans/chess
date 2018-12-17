@@ -55,23 +55,12 @@ class Board
     return self
   end
 
-  def moveable_pieces(pieces_array)
-    moveable_pieces = []
-    squares.each do |square|
-      pos = square.coordinates
-      allowed_moves = allowed_moves(pieces_array, pos)
-      moveable_pieces += allowed_moves
-    end
-    moveable_pieces
-  end
-
   def check?(team)
     # one of the opposite player's pieces can capture the player's king
     king = get_king(team)
     enemy_team = switch_team(team)
     enemy_pieces = get_pieces(enemy_team)
-    allowed_moves = allowed_moves(enemy_pieces, locate(king))
-    !allowed_moves.empty?
+    any_moves?(enemy_pieces, locate(king))
   end
 
   def checkmate?(team)
@@ -79,7 +68,11 @@ class Board
     return false if !check?(team)
     # the player has no possible moves
     player_pieces = get_pieces(team)
-    moveable_pieces(player_pieces).empty?
+    squares.each do |square|
+      pos = square.coordinates
+      return false if any_moves?(player_pieces, pos)
+    end
+    true
   end
 
   def stalemate?(team)
@@ -87,7 +80,11 @@ class Board
     return false if check?(team)
     # the player has no possible moves
     player_pieces = get_pieces(team)
-    moveable_pieces(player_pieces).empty?
+    squares.each do |square|
+      pos = square.coordinates
+      return false if any_moves?(player_pieces, pos)
+    end
+    true
   end
 
   protected
@@ -186,6 +183,7 @@ class Board
 
   def capture(location)
     captured = get_piece(location)
+    empty(location)
     remove(captured)
     text = "You captured a #{captured.type}!"
     add_message(text)
@@ -277,11 +275,11 @@ class Board
     pieces.set_moved(piece)
   end
 
-  def allowed_moves(pieces_array, end_pos)
-    pieces_array.select { |piece| piece.can_move?(self, end_pos) }
-  end
-
   def get_king(team)
     pieces.get_king(team)
+  end
+
+  def any_moves?(pieces_array, end_pos)
+    pieces_array.any? { |piece| piece.can_move?(self, end_pos) }
   end
 end
