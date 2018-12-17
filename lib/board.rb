@@ -55,6 +55,7 @@ class Board
   end
 
   def check?(team)
+    puts "#check? called with #{team}"
     # one of the opposite player's pieces can capture the player's king
     king = get_king(team)
     enemy_team = switch_team(team)
@@ -63,6 +64,7 @@ class Board
   end
 
   def checkmate?(team)
+    puts "#checkmate? called"
     # the king is in check
     return false if !check?(team)
     # the player has no possible moves to get him out of check
@@ -78,6 +80,7 @@ class Board
   end
 
   def stalemate?(team)
+    puts "#stalemate? called"
     # the king is not in check
     return false if check?(team)
     # the player has no possible moves
@@ -112,6 +115,7 @@ class Board
   # methods related to move checking and making moves
 
   def normal_move_allowed?(move)
+    puts "checking if #{move.path[0]} to #{move.path[-1]} is allowed for #{move.piece.colour} #{move.piece.type}"
     end_pos = move.path[-1]
     team = move.piece.colour
     if empty?(end_pos)
@@ -128,6 +132,7 @@ class Board
   end
 
   def special_move_allowed?(move)
+    puts "checking if #{move.name} from #{move.path[0]} to #{move.path[-1]} is allowed for #{move.piece.colour} #{move.piece.type}"
     end_pos = move.path[-1]
     team = move.piece.colour
     case move.name
@@ -167,14 +172,17 @@ class Board
   end
 
   def move_causes_check?(move)
+    puts "copying the board..."
     board_copy = duplicate
     coordinates = self.locate(move.piece)
     piece_copy = board_copy.get_piece(coordinates)
     team = move.piece.colour
     end_pos = move.path[-1]
     if piece_copy.move(board_copy, end_pos).check?(team)
+      puts "move #{move.path[0]} to #{move.path[-1]} with #{move.piece} causes check for #{team}"
       return true
     else
+      puts "move #{move.path[0]} to #{move.path[-1]} with #{move.piece} doesn't cause check for #{team}"
       return false
     end
   end
