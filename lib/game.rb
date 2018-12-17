@@ -40,9 +40,7 @@ class Game
   end
 
   def check_board
-    if check?(team)
-      puts "Check!"
-    elsif checkmate?(team)
+    if checkmate?(team)
       puts "Checkmate!"
       switch_players
       victory
@@ -50,6 +48,7 @@ class Game
       puts "Stalemate!"
       draw
     end
+    puts "Check!" if check?(team)
   end
 
   def switch_players

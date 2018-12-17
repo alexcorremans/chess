@@ -1,5 +1,6 @@
 require_relative 'squares'
 require_relative 'pieces'
+require_relative 'printer'
 require 'yaml'
 
 class Board
@@ -13,6 +14,7 @@ class Board
   end
 
   def display(team)
+    Printer.new(squares).display(team)
   end
 
   def get_pieces(type='all', team)
