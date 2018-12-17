@@ -42,10 +42,12 @@ class Game
   def check_board
     if checkmate?(team)
       puts "Checkmate!"
+      display_board
       switch_players
       victory
     elsif stalemate?(team)
       puts "Stalemate!"
+      display_board
       draw
     end
     puts "Check!" if check?(team)
