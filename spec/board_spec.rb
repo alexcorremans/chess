@@ -2,12 +2,27 @@ require './lib/board'
 
 describe Board do  
   describe "#display(team)" do
+    let(:squares) { instance_double(Squares) }
+    let(:pieces) { instance_double(Pieces) }
+    let(:board) { Board.new(squares: squares, pieces: pieces) }
+    let(:printer) { instance_double(Printer) }
+
     context "when it's White's turn" do
-      it "displays the board from White's perspective"
+      it "sends a message to Printer to display the board from White's perspective" do
+        allow(Printer).to receive(:new).with(squares).and_return(printer)
+        allow(printer).to receive(:display).with('white')
+        board.display('white')
+        expect(printer).to have_received(:display).with('white')        
+      end
     end
 
     context "when it's Black's turn" do
-      it "displays the board from Black's perspective"
+      it "sends a message to Printer to display the board from White's perspective" do
+        allow(Printer).to receive(:new).with(squares).and_return(printer)
+        allow(printer).to receive(:display).with('black')
+        board.display('black')
+        expect(printer).to have_received(:display).with('black') 
+      end
     end
   end
 
@@ -118,14 +133,28 @@ describe Board do
         end
 
         context "when one of the other player's pieces is at the endpoint" do
-          it "returns true" do
-            black_piece = instance_double(Piece)
+          let(:black_piece) { instance_double(Piece) }
+
+          before do
             allow(black_piece).to receive(:colour).and_return('black')
             allow(squares).to receive(:empty?).with([1,1]).and_return(true)
             allow(squares).to receive(:empty?).with([2,2]).and_return(false)
             allow(squares).to receive(:get_piece).with([2,2]).and_return(black_piece)
-            expect(board.move_allowed?(move)).to be true
           end
+
+          context "when the moving piece is a pawn" do
+            it "returns false" do
+              allow(piece).to receive(:type).and_return('pawn')
+              expect(board.move_allowed?(move)).to be false
+            end
+          end
+
+          context "when the moving piece is not a pawn" do
+            it "returns true" do
+              allow(piece).to receive(:type).and_return('bishop')
+              expect(board.move_allowed?(move)).to be true
+            end
+          end          
         end
       end
       
@@ -430,7 +459,13 @@ describe Board do
           allow(captured_piece).to receive(:colour).and_return('white')
           allow(squares).to receive(:empty?).with([2,2]).and_return(false)
           allow(squares).to receive(:get_piece).with([2,2]).and_return(captured_piece)
+          allow(squares).to receive(:empty).with([2,2])
           allow(pieces).to receive(:remove).with(captured_piece)
+        end
+
+        it "sends a message to squares to remove the captured piece" do
+          board.update(move)
+          expect(squares).to have_received(:empty).with([2,2])
         end
 
         it "sends a message to pieces to remove the captured piece" do
@@ -472,6 +507,7 @@ describe Board do
           allow(black_pawn).to receive(:type).and_return('pawn')
           allow(black_pawn).to receive(:colour).and_return('black')
           allow(squares).to receive(:get_piece).with([4,4]).and_return(black_pawn)
+          allow(squares).to receive(:empty).with([4,4])
           allow(pieces).to receive(:remove).with(black_pawn)
         end
 
@@ -666,7 +702,7 @@ describe Board do
       end
     end
   end
-
+=begin
   describe "#moveable_pieces(pieces_array)" do
     let(:white_king) { instance_double(King) }
     let(:white_queen) { instance_double(Queen) }
@@ -706,7 +742,7 @@ describe Board do
       end
     end
   end
-
+=end
   describe "#check?(team)" do
     let(:squares) { instance_double(Squares) }
     let(:pieces) { instance_double(Pieces) }
@@ -743,16 +779,22 @@ describe Board do
   end
 
   describe "#check_mate?(team)" do
-    let(:squares) { instance_double(Squares) }
+    let(:white_king) { instance_double(King) }
+    let(:white_queen) { instance_double(Queen) }
+    let(:white_pieces) { [white_king, white_queen] }
+    let(:black_rook) { instance_double(Rook) }
+    let(:black_bishop) { instance_double(Bishop) }
+    let(:black_pieces) { [black_rook, black_bishop] }
+    let(:square1) { instance_double(Square) }
+    let(:square2) { instance_double(Square) }
+    let(:squares) { Squares.new([square1, square2]) }
     let(:pieces) { instance_double(Pieces) }
     let(:board) { Board.new(squares: squares, pieces: pieces) }
 
-    let(:white_king) { instance_double(King) }
-    let(:white_queen) { instance_double(Queen) }
-    let(:black_rook) { instance_double(Rook) }
-    let(:black_bishop) { instance_double(Bishop) }
-    let(:white_pieces) { [white_king, white_queen] }
-    let(:black_pieces) { [black_rook, black_bishop] }
+    before do
+      allow(square1).to receive(:coordinates).and_return([0,0])
+      allow(square2).to receive(:coordinates).and_return([1,1])
+    end
     
     context "when the player's king is not in check" do
       before do
@@ -780,30 +822,44 @@ describe Board do
       context "when the player still has possible moves" do
         it "returns false" do
           allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-          allow(board).to receive(:moveable_pieces).with(white_pieces).and_return([white_queen])
+          allow(white_king).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_king).to receive(:can_move?).with(board, [1,1]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [1,1]).and_return(true)
+          expect(board.checkmate?('white')).to be false
         end
       end
 
       context "when the player has no possible moves" do
         it "returns true" do
           allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-          allow(board).to receive(:moveable_pieces).with(white_pieces).and_return([])
+          allow(white_king).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_king).to receive(:can_move?).with(board, [1,1]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [1,1]).and_return(false)
+          expect(board.checkmate?('white')).to be true
         end
       end
     end
   end
 
   describe "#stalemate?(team)" do
-    let(:squares) { instance_double(Squares) }
+    let(:white_king) { instance_double(King) }
+    let(:white_queen) { instance_double(Queen) }
+    let(:white_pieces) { [white_king, white_queen] }
+    let(:black_rook) { instance_double(Rook) }
+    let(:black_bishop) { instance_double(Bishop) }
+    let(:black_pieces) { [black_rook, black_bishop] }
+    let(:square1) { instance_double(Square) }
+    let(:square2) { instance_double(Square) }
+    let(:squares) { Squares.new([square1, square2]) }
     let(:pieces) { instance_double(Pieces) }
     let(:board) { Board.new(squares: squares, pieces: pieces) }
 
-    let(:white_king) { instance_double(King) }
-    let(:white_queen) { instance_double(Queen) }
-    let(:black_rook) { instance_double(Rook) }
-    let(:black_bishop) { instance_double(Bishop) }
-    let(:white_pieces) { [white_king, white_queen] }
-    let(:black_pieces) { [black_rook, black_bishop] }
+    before do
+      allow(square1).to receive(:coordinates).and_return([0,0])
+      allow(square2).to receive(:coordinates).and_return([1,1])
+    end
     
     context "when the player's king is in check" do
       before do
@@ -831,7 +887,10 @@ describe Board do
       context "when the player still has possible moves" do
         it "returns false" do
           allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-          allow(board).to receive(:moveable_pieces).with(white_pieces).and_return([white_queen])
+          allow(white_king).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_king).to receive(:can_move?).with(board, [1,1]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [1,1]).and_return(true)
           expect(board.stalemate?('white')).to be false
         end
       end
@@ -839,7 +898,10 @@ describe Board do
       context "when the player has no possible moves" do
         it "returns true" do
           allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-          allow(board).to receive(:moveable_pieces).with(white_pieces).and_return([])
+          allow(white_king).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_king).to receive(:can_move?).with(board, [1,1]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [0,0]).and_return(false)
+          allow(white_queen).to receive(:can_move?).with(board, [1,1]).and_return(false)
           expect(board.stalemate?('white')).to be true
         end
       end
