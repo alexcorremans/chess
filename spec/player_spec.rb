@@ -107,19 +107,7 @@ describe Player do
           expect(InputParser).to have_received(:choose_piece).with('knight', [1,0])
           expect(InputParser).to have_received(:choose_piece).with('knight', [4,1])
         end
-=begin
-        context "when the player provides invalid input" do          
-          it "tells the player the input is invalid" do
-            allow(InputParser).to receive(:choose_piece).and_return('test','y')
-            allow(first_knight).to receive(:move)
-            expect{player.play(board)}.to output(
-              "More than one piece can make that move.\n" +
-              "Do you want to move the knight that is currently at b1? Please answer (y/n)\n" +
-              "Please type 'y' or 'n' to indicate whether you want to move the piece above.\n"
-            ).to_stdout            
-          end
-        end
-=end
+
         context "when the player chooses a piece to move" do
           let(:new_board) { instance_double(Board) }
 
