@@ -2,6 +2,8 @@ shared_examples "a Piece" do
   it { is_expected.to respond_to(:colour) }
   it { is_expected.to respond_to(:type) }
   it { is_expected.to respond_to(:can_move?) }
+  it { is_expected.to respond_to(:move_allowed?) }
+  it { is_expected.to respond_to(:no_check?) }
   it { is_expected.to respond_to(:move) }
   it { is_expected.to respond_to(:moved?) }
   it { is_expected.to respond_to(:set_moved) }

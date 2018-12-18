@@ -40,8 +40,7 @@ class Board
       return false unless normal_move_allowed?(move)
     else
       return false unless special_move_allowed?(move)
-    end 
-    # return !move_causes_check?(move)
+    end
     true
   end
 

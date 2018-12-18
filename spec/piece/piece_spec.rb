@@ -60,7 +60,7 @@ describe PieceSpecialDouble do
   it_behaves_like 'a PieceSubclass'
 end
 
-describe Piece do
+fdescribe Piece do
   let(:subject) { Piece.new('white') }
 
   it_behaves_like 'a Piece'
@@ -85,17 +85,28 @@ describe Piece do
     end
 
     context "when the endpoint is somewhere the piece can normally go" do
-      context "when the current board state allows the piece to go there" do
-        it "returns true" do
-          allow(board).to receive(:move_allowed?).and_return(true)
-          expect(double.can_move?(board, [0,1])).to be true
+      context "when the current board state doesn't allow the piece to go there" do
+        it "returns false" do
+          allow(board).to receive(:move_ok?).and_return(false)
+          expect(double.can_move?(board, [0,1])).to be false
         end
       end
 
-      context "when the current board state doesn't allow the piece to go there" do
-        it "returns false" do
-          allow(board).to receive(:move_allowed?).and_return(false)
-          expect(double.can_move?(board, [0,1])).to be false
+      context "when the current board state allows the piece to go there" do
+        context "when the move puts the player in check" do
+          it "returns false" do
+            allow(board).to receive(:move_ok?).and_return(true)
+            allow(board).to receive(:move_causes_check?).and_return(true)
+            expect(double.can_move?(board, [0,1])).to be false  
+          end
+        end
+
+        context "when the move doesn't put the player in check" do
+          it "returns true" do
+            allow(board).to receive(:move_ok?).and_return(true)
+            allow(board).to receive(:move_causes_check?).and_return(false)
+            expect(double.can_move?(board, [0,1])).to be true
+          end
         end
       end
     end
@@ -103,17 +114,28 @@ describe Piece do
     context "when the endpoint is somewhere the piece can't normally go" do
       context "when the piece has special moves" do
         context "when the requested move is one of the piece's special moves" do
-          context "when the board allows it" do
-            it "returns true" do
-              allow(board).to receive(:move_allowed?).and_return(true)
-              expect(special_double.can_move?(board, [2,0])).to be true
-            end
-          end
-    
           context "when the board doesn't allow it" do
             it "returns false" do
-              allow(board).to receive(:move_allowed?).and_return(false)
+              allow(board).to receive(:move_ok?).and_return(false)
               expect(special_double.can_move?(board, [2,0])).to be false
+            end
+          end
+
+          context "when the board allows it" do
+            context "when the move puts the player in check" do
+              it "returns false" do
+                allow(board).to receive(:move_ok?).and_return(true)
+                allow(board).to receive(:move_causes_check?).and_return(true)
+                expect(special_double.can_move?(board, [2,0])).to be false
+              end
+            end
+
+            context "when the move doesn't put the player in check" do
+              it "returns true" do
+                allow(board).to receive(:move_ok?).and_return(true)
+                allow(board).to receive(:move_causes_check?).and_return(false)
+                expect(special_double.can_move?(board, [2,0])).to be true
+              end
             end
           end
         end
