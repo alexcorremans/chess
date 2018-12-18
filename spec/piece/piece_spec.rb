@@ -60,7 +60,7 @@ describe PieceSpecialDouble do
   it_behaves_like 'a PieceSubclass'
 end
 
-fdescribe Piece do
+describe Piece do
   let(:subject) { Piece.new('white') }
 
   it_behaves_like 'a Piece'
