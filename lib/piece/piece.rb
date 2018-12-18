@@ -14,16 +14,39 @@ class Piece
   end
 
   def can_move?(board, end_pos)
+    move_allowed?(board, end_pos) && no_check?(board, end_pos)
+  end
+
+  def move_allowed?(board, end_pos)
     pos = board.get_position(self)
     return false if pos == end_pos
     path = get_path(pos, end_pos)
     if !path.nil?
       move = create_move(self, path)
-      return board.move_allowed?(move)
+      return board.move_ok?(move)
     elsif path.nil? && special_moves?
       special_move = get_special_move(pos, end_pos)
       if !special_move.nil?
-        return board.move_allowed?(special_move)
+        return board.move_ok?(special_move)
+      else
+        return false
+      end
+    else
+      return false
+    end
+  end
+
+  def no_check?(board, end_pos)
+    pos = board.get_position(self)
+    return false if pos == end_pos
+    path = get_path(pos, end_pos)
+    if !path.nil?
+      move = create_move(self, path)
+      return !board.move_causes_check?(move)
+    elsif path.nil? && special_moves?
+      special_move = get_special_move(pos, end_pos)
+      if !special_move.nil?
+        return !board.move_causes_check?(special_move)
       else
         return false
       end
@@ -44,6 +67,18 @@ class Piece
       new_board = board.update(move)
       return new_board
     end
+  end
+
+  def new_move(board, end_pos)
+    puts "creating move for #{self.colour} #{self.type} to go to #{end_pos}"
+    pos = board.get_position(self)
+    path = get_path(pos, end_pos)
+    if path.nil?
+      move = get_special_move(pos, end_pos)
+    else
+      move = create_move(self, path)
+    end
+    move
   end
 
   def set_moved

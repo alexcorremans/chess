@@ -30,7 +30,7 @@ class Board
     self
   end
 
-  def move_allowed?(move)
+  def move_ok?(move)
     # make sure all squares in the middle of the path are empty
     if move.path.size > 2
       return false unless path_empty?(move.path)
@@ -41,7 +41,28 @@ class Board
     else
       return false unless special_move_allowed?(move)
     end 
-    return !move_causes_check?(move)
+    # return !move_causes_check?(move)
+    true
+  end
+
+  def move_causes_check?(move)
+    puts "investigating move #{move}"
+    puts "copying the board..."
+    board_copy = duplicate
+    coordinates = self.locate(move.piece)
+    p coordinates
+    piece_copy = board_copy.get_piece(coordinates)
+    p piece_copy
+    team = move.piece.colour
+    p team
+    end_pos = move.path[-1]
+    if piece_copy.move(board_copy, end_pos).check?(team)
+      puts "move #{move.path[0]} to #{move.path[-1]} with #{move.piece} causes check for #{team}"
+      return true
+    else
+      puts "move #{move.path[0]} to #{move.path[-1]} with #{move.piece} doesn't cause check for #{team}"
+      return false
+    end
   end
 
   def update(move)
@@ -67,13 +88,23 @@ class Board
     puts "#checkmate? called"
     # the king is in check
     return false if !check?(team)
-    # the player has no possible moves to get him out of check
+    # the player has no possible moves to get out of check
     player_pieces = get_pieces(team)
+    allowed_pieces = []
     moves = []
     squares.each do |square|
       pos = square.coordinates
-      moves + allowed_moves(player_pieces, pos)
+      allowed_pieces = allowed_moves(player_pieces, pos)
+      next if allowed_pieces.empty?
+      allowed_pieces.each do |piece|
+        move = create_move(piece, pos)
+        puts "created move for #{piece.type} to go to #{pos}"
+        p piece
+        p move.piece
+        moves << create_move(piece, pos)
+      end
     end
+    return true if moves.empty?
     return moves.all? do |move|
       move_causes_check?(move)
     end
@@ -171,22 +202,6 @@ class Board
     end
   end
 
-  def move_causes_check?(move)
-    puts "copying the board..."
-    board_copy = duplicate
-    coordinates = self.locate(move.piece)
-    piece_copy = board_copy.get_piece(coordinates)
-    team = move.piece.colour
-    end_pos = move.path[-1]
-    if piece_copy.move(board_copy, end_pos).check?(team)
-      puts "move #{move.path[0]} to #{move.path[-1]} with #{move.piece} causes check for #{team}"
-      return true
-    else
-      puts "move #{move.path[0]} to #{move.path[-1]} with #{move.piece} doesn't cause check for #{team}"
-      return false
-    end
-  end
-
   def normal_move(move)
     start_pos = move.path[0]
     end_pos = move.path[-1]
@@ -248,10 +263,6 @@ class Board
     end
   end
 
-  def create_move(piece, path, move_name=nil)
-    Move.new(piece: piece, path: path, name: move_name)
-  end
-
   # methods interacting with squares
 
   def update_square(location, piece)
@@ -296,10 +307,15 @@ class Board
   end
 
   def any_moves?(pieces_array, end_pos)
-    pieces_array.any? { |piece| piece.can_move?(self, end_pos) }
+    pieces_array.any? { |piece| piece.move_allowed?(self, end_pos) }
   end
 
   def allowed_moves(pieces_array, end_pos)
-    pieces_array.select { |piece| piece.can_move?(self, end_pos) }
+    pieces_array.select { |piece| piece.move_allowed?(self, end_pos) }
   end
+
+  def create_move(piece, end_pos)
+    piece.new_move(self, end_pos)
+  end
+
 end
