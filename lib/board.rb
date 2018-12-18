@@ -90,24 +90,14 @@ class Board
     return false if !check?(team)
     # the player has no possible moves to get out of check
     player_pieces = get_pieces(team)
-    allowed_pieces = []
-    moves = []
+    no_check_pieces = []
     squares.each do |square|
       pos = square.coordinates
       allowed_pieces = allowed_moves(player_pieces, pos)
       next if allowed_pieces.empty?
-      allowed_pieces.each do |piece|
-        move = create_move(piece, pos)
-        puts "created move for #{piece.type} to go to #{pos}"
-        p piece
-        p move.piece
-        moves << create_move(piece, pos)
-      end
+      no_check_pieces += no_check(allowed_pieces, pos)
     end
-    return true if moves.empty?
-    return moves.all? do |move|
-      move_causes_check?(move)
-    end
+    no_check_pieces.empty?
   end
 
   def stalemate?(team)
@@ -314,8 +304,7 @@ class Board
     pieces_array.select { |piece| piece.move_allowed?(self, end_pos) }
   end
 
-  def create_move(piece, end_pos)
-    piece.new_move(self, end_pos)
+  def no_check(pieces_array, end_pos)
+    pieces_array.select { |piece| piece.no_check?(self, end_pos) }
   end
-
 end

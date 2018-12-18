@@ -69,18 +69,6 @@ class Piece
     end
   end
 
-  def new_move(board, end_pos)
-    puts "creating move for #{self.colour} #{self.type} to go to #{end_pos}"
-    pos = board.get_position(self)
-    path = get_path(pos, end_pos)
-    if path.nil?
-      move = get_special_move(pos, end_pos)
-    else
-      move = create_move(self, path)
-    end
-    move
-  end
-
   def set_moved
     @moved = true
     self
