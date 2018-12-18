@@ -717,29 +717,6 @@ describe Board do
     end
   end
 
-=begin
-  context "when the move doesn't put the king in check" do
-    before do
-      allow(board).to receive(:move_causes_check?).and_return(false)
-    end
-
-  context "when the move puts the king in check" do
-    before do
-      allow(board).to receive(:move_causes_check?).and_return(true)
-    end
-
-    it "returns false" do
-      path = [[0,0],[1,1],[2,2]]
-      piece = instance_double(Piece)
-      move = Move.new(path: path, piece: piece)
-      allow(piece).to receive(:colour).and_return('white')
-      allow(squares).to receive(:empty?).with([1,1]).and_return(true)
-      allow(squares).to receive(:empty?).with([2,2]).and_return(true)
-      expect(board.move_ok?(move)).to be false
-    end
-  end
-=end
-
   describe "#check?(team)" do
     let(:squares) { instance_double(Squares) }
     let(:pieces) { instance_double(Pieces) }
@@ -848,85 +825,6 @@ describe Board do
             allow(white_queen).to receive(:move_allowed?).with(board, [1,1]).and_return(false)
             allow(white_king).to receive(:no_check?).with(board, [1,1]).and_return(true)
             expect(board.checkmate?('white')).to be false
-          end
-        end
-      end
-    end
-  end
-
-  describe "#stalemate?(team)" do
-    let(:white_king) { instance_double(King) }
-    let(:white_queen) { instance_double(Queen) }
-    let(:white_pieces) { [white_king, white_queen] }
-    let(:black_rook) { instance_double(Rook) }
-    let(:black_bishop) { instance_double(Bishop) }
-    let(:black_pieces) { [black_rook, black_bishop] }
-    let(:square1) { instance_double(Square) }
-    let(:square2) { instance_double(Square) }
-    let(:squares) { Squares.new([square1, square2]) }
-    let(:pieces) { instance_double(Pieces) }
-    let(:board) { Board.new(squares: squares, pieces: pieces) }
-
-    before do
-      allow(square1).to receive(:coordinates).and_return([0,0])
-      allow(square2).to receive(:coordinates).and_return([1,1])
-    end
-    
-    context "when the player's king is in check" do
-      before do
-        allow(pieces).to receive(:get_king).with('white').and_return(white_king)
-        allow(squares).to receive(:locate).with(white_king).and_return([0,0])
-        allow(pieces).to receive(:get_pieces).with('all', 'black').and_return(black_pieces)
-        allow(black_rook).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-        allow(black_bishop).to receive(:move_allowed?).with(board, [0,0]).and_return(true)
-      end
-
-      it "returns false" do
-        expect(board.stalemate?('white')).to be false
-      end
-    end
-    
-    context "when the player's king is not in check" do
-      before do
-        allow(pieces).to receive(:get_king).with('white').and_return(white_king)
-        allow(squares).to receive(:locate).with(white_king).and_return([0,0])
-        allow(pieces).to receive(:get_pieces).with('all', 'black').and_return(black_pieces)
-        allow(black_rook).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-        allow(black_bishop).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-      end
-
-      context "when the player has no possible moves" do
-        it "returns true" do
-          allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-          allow(white_king).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-          allow(white_king).to receive(:move_allowed?).with(board, [1,1]).and_return(false)
-          allow(white_queen).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-          allow(white_queen).to receive(:move_allowed?).with(board, [1,1]).and_return(false)
-          expect(board.stalemate?('white')).to be true
-        end
-      end
-
-      context "when the player still has possible moves" do
-        context "when all the possible moves still leave the king in check" do
-          it "returns true" do
-            allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-            allow(white_king).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-            allow(white_king).to receive(:move_allowed?).with(board, [1,1]).and_return(true)
-            allow(white_queen).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-            allow(white_queen).to receive(:move_allowed?).with(board, [1,1]).and_return(false)
-            allow(white_king).to receive(:no_check?).with(board, [1,1]).and_return(false)
-            expect(board.stalemate?('white')).to be true
-          end
-        end
-        context "when one of the possible moves removes the check" do
-          it "returns false" do
-            allow(pieces).to receive(:get_pieces).with('all', 'white').and_return(white_pieces)
-            allow(white_king).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-            allow(white_king).to receive(:move_allowed?).with(board, [1,1]).and_return(true)
-            allow(white_queen).to receive(:move_allowed?).with(board, [0,0]).and_return(false)
-            allow(white_queen).to receive(:move_allowed?).with(board, [1,1]).and_return(false)
-            allow(white_king).to receive(:no_check?).with(board, [1,1]).and_return(true)
-            expect(board.stalemate?('white')).to be false
           end
         end
       end

@@ -85,22 +85,7 @@ class Board
     end
     no_check_pieces.empty?
   end
-
-  def stalemate?(team)
-    # the king is not in check
-    return false if check?(team)
-    # the player has no possible moves
-    player_pieces = get_pieces(team)
-    no_check_pieces = []
-    squares.each do |square|
-      pos = square.coordinates
-      allowed_pieces = allowed_moves(player_pieces, pos)
-      next if allowed_pieces.empty?
-      no_check_pieces += no_check(allowed_pieces, pos)
-    end
-    no_check_pieces.empty?
-  end
-
+  
   protected
 
   # methods related to board state

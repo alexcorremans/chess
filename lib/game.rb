@@ -45,10 +45,6 @@ class Game
       display_board
       switch_players
       victory
-    elsif stalemate?(team)
-      puts "Stalemate!"
-      display_board
-      draw
     end
     puts "Check!" if check?(team)
   end
@@ -153,9 +149,5 @@ class Game
 
   def checkmate?(team)
     board.checkmate?(team)
-  end
-
-  def stalemate?(team)
-    board.stalemate?(team)
   end
 end
