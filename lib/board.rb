@@ -60,12 +60,7 @@ class Board
     piece_copy = board_copy.get_piece(coordinates)
     team = move.piece.colour
     end_pos = move.path[-1]
-    #piece_copy.move(board_copy, end_pos).check?(team)
-    if piece_copy.move(board_copy, end_pos).check?(team)
-      return true
-    else
-      return false
-    end
+    piece_copy.move(board_copy, end_pos).check?(team)
   end
 
   def check?(team)
