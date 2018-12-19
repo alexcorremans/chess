@@ -60,7 +60,12 @@ class Board
     piece_copy = board_copy.get_piece(coordinates)
     team = move.piece.colour
     end_pos = move.path[-1]
-    piece_copy.move(board_copy, end_pos).check?(team)
+    #piece_copy.move(board_copy, end_pos).check?(team)
+    if piece_copy.move(board_copy, end_pos).check?(team)
+      return true
+    else
+      return false
+    end
   end
 
   def check?(team)
@@ -80,10 +85,27 @@ class Board
     squares.each do |square|
       pos = square.coordinates
       allowed_pieces = allowed_moves(player_pieces, pos)
-      next if allowed_pieces.empty?
-      no_check_pieces += no_check(allowed_pieces, pos)
+      allowed_pieces.each do |piece|
+        return false if no_check?(piece, pos)
+      end
     end
-    no_check_pieces.empty?
+    true
+  end
+
+  def stalemate?(team)
+    # the king is not in check
+    return false if check?(team)
+    # the player has no possible moves
+    player_pieces = get_pieces(team)
+    no_check_pieces = []
+    squares.each do |square|
+      pos = square.coordinates
+      allowed_pieces = allowed_moves(player_pieces, pos)
+      allowed_pieces.each do |piece|
+        return false if no_check?(piece, pos)
+      end
+    end
+    true
   end
   
   protected
@@ -133,7 +155,8 @@ class Board
     when 'capture'
       if empty?(end_pos) # en passant
         return false if last_move.nil?
-        if last_move.name == 'two steps' && last_move.path[-1][0] == end_pos[0]
+        if last_move.name == 'two steps' && last_move.path[-1][0] == end_pos[0] &&
+           (last_move.path[-1][1] == end_pos[1] - 1 || last_move.path[-1][1] == end_pos[1] + 1)
           return true
         else
           return false
@@ -275,7 +298,7 @@ class Board
     pieces_array.select { |piece| piece.move_allowed?(self, end_pos) }
   end
 
-  def no_check(pieces_array, end_pos)
-    pieces_array.select { |piece| piece.no_check?(self, end_pos) }
+  def no_check?(piece, end_pos)
+    piece.no_check?(self, end_pos)
   end
 end
